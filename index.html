@@ -176,6 +176,34 @@
   .ed-field label{font-size:10.5px; color:var(--mut); text-transform:uppercase; letter-spacing:.4px; padding-left:2px}
   .ed-field input{width:100%; padding:10px 8px; border-radius:10px; border:1px solid var(--line); background:var(--card2); color:var(--txt); font-size:15px; text-align:center; font-weight:600}
   .ed-del{width:44px; height:42px; border-radius:10px; border:1px solid var(--line); background:var(--card2); color:var(--red); font-size:16px; cursor:pointer; flex:0 0 auto}
+  .ed-pick{display:flex; align-items:center; justify-content:space-between; text-align:left; cursor:pointer}
+  .ed-pick span:first-child{overflow:hidden; text-overflow:ellipsis; white-space:nowrap; font-weight:600}
+  .ed-pick .grp{font-weight:500; color:var(--mut); font-size:12px}
+  .ed-pick .chev{color:var(--mut); font-size:12px; margin-left:8px; flex:0 0 auto}
+  /* exercise picker sheet */
+  .sheet-bg{position:fixed; inset:0; z-index:110; background:rgba(0,0,0,.55); display:flex; align-items:flex-end; justify-content:center}
+  .sheet{
+    width:100%; max-width:640px; max-height:82vh; background:var(--card); border:1px solid var(--line);
+    border-radius:18px 18px 0 0; display:flex; flex-direction:column; padding-bottom:env(safe-area-inset-bottom);
+  }
+  .sheet-head{display:flex; align-items:center; justify-content:space-between; padding:16px 16px 10px}
+  .sheet-head b{font-size:16px}
+  .sheet-head button{background:none; border:none; color:var(--mut); font-size:20px; cursor:pointer}
+  .sheet-search{display:flex; gap:8px; padding:0 16px 12px}
+  .sheet-search input{flex:1; padding:12px; border-radius:11px; border:1px solid var(--line); background:var(--card2); color:var(--txt); font-size:15px}
+  .sheet-search .mode{padding:0 14px; border-radius:11px; border:1px solid var(--line); background:var(--card2); color:var(--mut); font-weight:600; font-size:13px; cursor:pointer; white-space:nowrap}
+  .sheet-search .mode.on{background:var(--acc); color:#06210f; border-color:var(--acc)}
+  .sheet-text{display:flex; gap:8px; padding:0 16px 14px}
+  .sheet-text input{flex:1; padding:12px; border-radius:11px; border:1px solid var(--acc); background:var(--card2); color:var(--txt); font-size:15px}
+  .sheet-text .btn{flex:0 0 auto; min-width:0; padding:12px 18px}
+  .sheet-list{overflow-y:auto; padding:0 10px 16px}
+  .grp-h{position:sticky; top:0; background:var(--card); color:var(--acc); font-size:11px; text-transform:uppercase; letter-spacing:.6px; font-weight:700; padding:10px 8px 6px}
+  .grp-i{display:flex; align-items:center; justify-content:space-between; gap:8px; width:100%; text-align:left; padding:12px; border:none; background:transparent; color:var(--txt); font-size:15px; border-radius:9px; cursor:pointer}
+  .grp-i:active{background:var(--card2)}
+  .grp-i.on{background:var(--acc); color:#06210f; font-weight:700}
+  .grp-i .tick{color:var(--acc); font-weight:800}
+  .grp-i.on .tick{color:#06210f}
+  .grp-empty{padding:24px 16px; text-align:center; color:var(--mut); font-size:14px}
   /* profile chooser */
   .chooser{
     position:fixed; inset:0; z-index:100; background:var(--bg); overflow-y:auto;
@@ -420,7 +448,10 @@
       </div>
 
       <div v-for="(ex,i) in editExes" :key="editDay+i" class="ed-ex">
-        <input class="ed-name" v-model="ex.n" placeholder="Nombre del ejercicio">
+        <button class="ed-name ed-pick" @click="openPicker(ex)">
+          <span>{{ ex.n || 'Elegir ejercicio' }}<span v-if="groupOf(ex.n)" class="grp"> · {{ groupOf(ex.n) }}</span></span>
+          <span class="chev">▾</span>
+        </button>
         <div class="ed-row">
           <div class="ed-field s"><label>Series</label><input type="number" inputmode="numeric" min="1" max="8" v-model.number="ex.s"></div>
           <div class="ed-field r"><label>Reps</label><input v-model="ex.r" placeholder="10-12"></div>
@@ -437,6 +468,34 @@
     </template>
     <div style="height:24px"></div>
   </main>
+
+  <!-- EXERCISE PICKER (bottom sheet) -->
+  <div v-if="pickerOpen" class="sheet-bg" @click.self="closePicker">
+    <div class="sheet">
+      <div class="sheet-head">
+        <b>Elegir ejercicio</b>
+        <button @click="closePicker">✕</button>
+      </div>
+      <div class="sheet-search">
+        <input ref="pickerInput" v-model="pickerSearch" placeholder="Buscar por nombre o músculo…">
+        <button class="mode" :class="{on:pickerTextMode}" @click="toggleTextMode">✏️ Texto</button>
+      </div>
+      <div v-if="pickerTextMode" class="sheet-text">
+        <input v-model="pickerText" placeholder="Nombre personalizado" @keyup.enter="applyText">
+        <button class="btn primary" @click="applyText">Usar</button>
+      </div>
+      <div v-else class="sheet-list">
+        <template v-for="grp in pickerGroups" :key="grp.g">
+          <div class="grp-h">{{ grp.g }}</div>
+          <button v-for="e in grp.items" :key="e.n" class="grp-i" :class="{on: pickerEx && pickerEx.n===e.n}" @click="selectExercise(e.n)">
+            <span>{{ e.n }}</span>
+            <span v-if="pickerEx && pickerEx.n===e.n" class="tick">✓</span>
+          </button>
+        </template>
+        <div v-if="!pickerGroups.length" class="grp-empty">Sin resultados. Toca <b>✏️ Texto</b> para un nombre propio.</div>
+      </div>
+    </div>
+  </div>
 
   <!-- rest timer -->
   <button v-if="view==='train' && curExes.length" id="tfab" @click="toggleTimer">⏱<small>DESCANSO</small></button>
@@ -535,6 +594,91 @@ const TYPE_OPTS = [
 ];
 const PALETTE = ["#4ade80","#38bdf8","#fbbf24","#c084fc","#f472b6","#2dd4bf","#fb923c"];
 
+// ---- exercise catalog (picklist) ----
+const GROUP_ORDER = ["Cuádriceps","Femoral","Glúteo","Gemelo","Pecho","Espalda","Hombro","Bíceps","Tríceps","Core","Cardio"];
+const EXERCISES = [
+  // Cuádriceps
+  {n:"Prensa de piernas", g:"Cuádriceps"},
+  {n:"Prensa de piernas (pies altos, glúteo)", g:"Cuádriceps"},
+  {n:"Sentadilla hack (máquina)", g:"Cuádriceps"},
+  {n:"Sentadilla Smith (guiada)", g:"Cuádriceps"},
+  {n:"Extensión de cuádriceps", g:"Cuádriceps"},
+  {n:"Zancadas en Smith", g:"Cuádriceps"},
+  // Femoral
+  {n:"Curl femoral tumbado (máquina)", g:"Femoral"},
+  {n:"Curl femoral sentado", g:"Femoral"},
+  {n:"Curl femoral (máquina)", g:"Femoral"},
+  {n:"Peso muerto rumano en máquina", g:"Femoral"},
+  {n:"Peso muerto en máquina", g:"Femoral"},
+  {n:"Buenos días en Smith", g:"Femoral"},
+  // Glúteo
+  {n:"Hip thrust / glute drive (máquina)", g:"Glúteo"},
+  {n:"Puente de glúteo en máquina", g:"Glúteo"},
+  {n:"Patada de glúteo en polea", g:"Glúteo"},
+  {n:"Abductor en máquina", g:"Glúteo"},
+  // Gemelo
+  {n:"Elevación de gemelos en máquina", g:"Gemelo"},
+  {n:"Gemelo en prensa", g:"Gemelo"},
+  {n:"Gemelo sentado en máquina", g:"Gemelo"},
+  // Pecho
+  {n:"Press de pecho en máquina", g:"Pecho"},
+  {n:"Press banca Smith (guiada)", g:"Pecho"},
+  {n:"Press inclinado en máquina", g:"Pecho"},
+  {n:"Press inclinado Smith", g:"Pecho"},
+  {n:"Press pecho en polea", g:"Pecho"},
+  {n:"Press de pecho agarre cerrado (máquina)", g:"Pecho"},
+  {n:"Aperturas en máquina (peck deck)", g:"Pecho"},
+  {n:"Aperturas en polea", g:"Pecho"},
+  {n:"Pull-over en polea", g:"Pecho"},
+  // Espalda
+  {n:"Jalón al pecho (polea)", g:"Espalda"},
+  {n:"Jalón agarre neutro", g:"Espalda"},
+  {n:"Jalón agarre estrecho", g:"Espalda"},
+  {n:"Dominadas asistidas (máquina)", g:"Espalda"},
+  {n:"Remo en máquina (horizontal)", g:"Espalda"},
+  {n:"Remo en polea sentado", g:"Espalda"},
+  {n:"Remo en polea baja", g:"Espalda"},
+  {n:"Remo en máquina apoyado", g:"Espalda"},
+  // Hombro
+  {n:"Press de hombro en máquina", g:"Hombro"},
+  {n:"Press hombro en polea", g:"Hombro"},
+  {n:"Press militar Smith", g:"Hombro"},
+  {n:"Elevación lateral en polea/máquina", g:"Hombro"},
+  {n:"Elevación lateral con mancuerna", g:"Hombro"},
+  {n:"Máquina deltoides lateral", g:"Hombro"},
+  {n:"Face pull en polea", g:"Hombro"},
+  {n:"Pájaros en polea", g:"Hombro"},
+  {n:"Máquina deltoides posterior", g:"Hombro"},
+  // Bíceps
+  {n:"Curl bíceps con mancuerna", g:"Bíceps"},
+  {n:"Curl bíceps en polea", g:"Bíceps"},
+  {n:"Curl bíceps en máquina", g:"Bíceps"},
+  {n:"Curl martillo con mancuerna", g:"Bíceps"},
+  {n:"Curl martillo en polea", g:"Bíceps"},
+  {n:"Curl predicador en máquina", g:"Bíceps"},
+  // Tríceps
+  {n:"Extensión tríceps en polea", g:"Tríceps"},
+  {n:"Extensión tríceps sobre cabeza (polea)", g:"Tríceps"},
+  {n:"Press francés en polea", g:"Tríceps"},
+  {n:"Patada de tríceps en polea", g:"Tríceps"},
+  {n:"Fondos en máquina asistida", g:"Tríceps"},
+  {n:"Press cerrado en máquina", g:"Tríceps"},
+  // Core
+  {n:"Plancha / core", g:"Core"},
+  {n:"Crunch en máquina", g:"Core"},
+  {n:"Rueda abdominal", g:"Core"},
+  {n:"Elevación de piernas", g:"Core"},
+  {n:"Oblicuos en polea", g:"Core"},
+  // Cardio
+  {n:"Cinta", g:"Cardio"},
+  {n:"Bici estática", g:"Cardio"},
+  {n:"Elíptica", g:"Cardio"},
+  {n:"Remo (máquina cardio)", g:"Cardio"},
+  {n:"Escaladora", g:"Cardio"},
+];
+const EX_GROUP = {}; EXERCISES.forEach(e=>{ if(!EX_GROUP[e.n]) EX_GROUP[e.n]=e.g; });
+function norm(s){ return (s||"").toLowerCase().normalize("NFD").replace(/\p{Diacritic}/gu,""); }
+
 const DIAS = ["Domingo","Lunes","Martes","Miércoles","Jueves","Viernes","Sábado"];
 const MESES = ["enero","febrero","marzo","abril","mayo","junio","julio","agosto","septiembre","octubre","noviembre","diciembre"];
 const KEY = "gymslop.v4";
@@ -597,6 +741,7 @@ createApp({
       newProfile: "", newType: "full",
       typeOpts: TYPE_OPTS,
       openSwap: null,
+      pickerOpen: false, pickerEx: null, pickerSearch: "", pickerText: "", pickerTextMode: false,
       todayIso: iso(now),
       calYear: now.getFullYear(), calMonth: now.getMonth(), selDate: null,
       timerOpen: false, tBase: 90, tLeft: 90, tRunning: false, tHandle: null,
@@ -615,6 +760,15 @@ createApp({
     hasTemplateDay(){ const t=TEMPLATES[this.prof.type]; return !!(t && t.days.find(d=>d.id===this.editDay)); },
     profileNames(){ return Object.keys(this.profiles); },
     needsPick(){ return !this.active || !this.profiles[this.active]; },
+    pickerGroups(){
+      const q = norm(this.pickerSearch);
+      const byGroup = {};
+      EXERCISES.forEach(e=>{
+        if(q && !norm(e.n).includes(q) && !norm(e.g).includes(q)) return;
+        (byGroup[e.g] = byGroup[e.g] || []).push(e);
+      });
+      return GROUP_ORDER.filter(g=>byGroup[g]).map(g=>({ g, items:byGroup[g] }));
+    },
     totalSets(){ return this.curExes.reduce((a,e)=>a+(+e.s||0),0); },
     doneSets(){ return this.curExes.reduce((a,e,i)=>a+(this.prof.sets[this.skey(i)]||[]).filter(Boolean).length,0); },
     pct(){ return this.totalSets ? Math.round(this.doneSets/this.totalSets*100) : 0; },
@@ -704,6 +858,16 @@ createApp({
       delete this.profiles[name];
       if(this.active===name){ this.active=Object.keys(this.profiles)[0]; this.syncDays(); }
     },
+    // exercise picker
+    groupOf(name){ return EX_GROUP[name] || ""; },
+    openPicker(ex){
+      this.pickerEx=ex; this.pickerSearch=""; this.pickerText=ex.n||""; this.pickerTextMode=false; this.pickerOpen=true;
+      this.$nextTick(()=>{ if(this.$refs.pickerInput) this.$refs.pickerInput.focus(); });
+    },
+    closePicker(){ this.pickerOpen=false; this.pickerEx=null; },
+    toggleTextMode(){ this.pickerTextMode=!this.pickerTextMode; if(this.pickerTextMode) this.pickerText=this.pickerEx?this.pickerEx.n:""; },
+    selectExercise(name){ if(this.pickerEx) this.pickerEx.n=name; this.closePicker(); },
+    applyText(){ const t=this.pickerText.trim(); if(t && this.pickerEx) this.pickerEx.n=t; this.closePicker(); },
     // routine editor
     clearDaySets(day){ Object.keys(this.prof.sets).forEach(k=>{ if(k.startsWith(day+".")) delete this.prof.sets[k]; }); },
     addExercise(){ this.curEditDay.ex.push({ n:"Nuevo ejercicio", s:3, r:"10-12", w:"" }); this.clearDaySets(this.editDay); },

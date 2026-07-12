@@ -60,7 +60,8 @@ App Vue 3 en un solo `index.html` (sin build). Pensada para el móvil en el gym.
   - **Pull Push Legs** — 3 días tirón / empuje / pierna, con backups.
   - **Clases** — sin ejercicios; solo registra la asistencia a clase en el calendario.
   - **Personalizado** — empieza vacío; añade tus días y ejercicios a mano.
-- **Editar rutina:** en Ajustes editas cada día: renombrar día, añadir/eliminar días y ejercicios; por ejercicio nombre (texto), series, reps y peso. *Restaurar día* vuelve a la plantilla original (rutinas estándar).
+- **Editar rutina:** en Ajustes editas cada día: renombrar día, añadir/eliminar días y ejercicios; por ejercicio series, reps y peso. *Restaurar día* vuelve a la plantilla original (rutinas estándar).
+- **Picklist de ejercicios:** el nombre se elige de un catálogo (67 ejercicios de máquina/polea) con **buscador rápido por nombre o grupo muscular** (acento-insensible: "biceps" encuentra "Bíceps"). Modo **✏️ Texto** para escribir un nombre propio.
 - **Entreno:** pestañas Día A/B/C, marca cada serie, apunta el peso, barra de progreso.
 - **Cambiar ejercicio:** los ejercicios de la rutina original traen 2 backups; si la máquina está ocupada, tocas y usas la alternativa.
 - **Calendario:** registra qué día entrenaste (A/B/C) o descanso, con racha y contador mensual.
