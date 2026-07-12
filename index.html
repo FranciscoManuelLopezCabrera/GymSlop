@@ -42,13 +42,14 @@
     color:var(--mut); border-radius:9px; font-weight:600; font-size:13.5px; cursor:pointer; transition:.15s;
   }
   .vswitch button.on{background:var(--acc); color:#06210f}
-  .tabs{display:flex; gap:8px; margin-top:12px}
+  .tabs{display:flex; gap:8px; margin-top:12px; overflow-x:auto; scrollbar-width:none}
+  .tabs::-webkit-scrollbar{display:none}
   .tab{
-    flex:1; padding:10px 0; text-align:center; border:1px solid var(--line);
+    flex:1 0 auto; min-width:72px; padding:10px 12px; text-align:center; border:1px solid var(--line);
     background:var(--card); color:var(--mut); border-radius:12px; font-weight:600;
     font-size:15px; cursor:pointer; transition:.15s;
   }
-  .tab .lbl{display:block; font-size:10.5px; font-weight:500; color:var(--mut); margin-top:2px}
+  .tab .lbl{display:block; font-size:10px; font-weight:500; color:var(--mut); margin-top:2px; white-space:nowrap}
   .tab.on{background:var(--acc); color:#06210f; border-color:var(--acc)}
   .tab.on .lbl{color:#0a3b1c}
   .prog{margin-top:12px}
@@ -58,7 +59,6 @@
   main{padding:16px 14px 0; max-width:640px; margin:0 auto}
   h3.sec{margin:22px 2px 10px; font-size:13px; color:var(--acc); text-transform:uppercase; letter-spacing:.6px}
   h3.sec:first-child{margin-top:4px}
-  /* exercise card */
   .ex{background:var(--card); border:1px solid var(--line); border-radius:var(--rad); margin-bottom:12px; overflow:hidden}
   .ex.done{border-color:var(--acc2)}
   .ex-h{display:flex; align-items:center; gap:12px; padding:14px 14px 10px}
@@ -97,14 +97,17 @@
   .swap-opt small{color:var(--mut); font-size:11px; font-weight:600}
   .swap-opt.active small{color:#0a3b1c}
   .swap-tag{font-size:10px; color:var(--mut); text-transform:uppercase; letter-spacing:.5px}
+  .empty-state{background:var(--card); border:1px solid var(--line); border-radius:var(--rad); padding:28px 20px; text-align:center; color:var(--mut); margin-bottom:14px}
+  .empty-state .ico{font-size:36px; display:block; margin-bottom:10px}
+  .empty-state b{color:var(--txt); display:block; margin-bottom:4px}
   .notes{background:var(--card); border:1px solid var(--line); border-radius:var(--rad); padding:14px 16px; margin:6px 0 20px}
   .notes h3{margin:0 0 10px; font-size:14px; color:var(--acc)}
   .notes ul{margin:0; padding-left:18px; color:var(--mut); font-size:13.5px}
   .notes li{margin-bottom:7px}
   .notes b{color:var(--txt)}
-  .rowbtns{display:flex; gap:10px; margin:4px 0 8px}
+  .rowbtns{display:flex; gap:10px; margin:4px 0 8px; flex-wrap:wrap}
   .btn{
-    flex:1; padding:11px; border-radius:11px; border:1px solid var(--line);
+    flex:1; min-width:120px; padding:11px; border-radius:11px; border:1px solid var(--line);
     background:var(--card); color:var(--mut); font-weight:600; font-size:13.5px; cursor:pointer;
   }
   .btn:active{transform:scale(.98)}
@@ -125,18 +128,13 @@
   .cal-cell.today{border-color:var(--acc)}
   .cal-cell.sel{outline:2px solid var(--blue); outline-offset:-2px}
   .cal-cell.rest{background:var(--card2)}
-  .cal-cell .lg{width:20px; height:20px; border-radius:7px; display:flex; align-items:center; justify-content:center; font-size:11px; font-weight:800; color:#06210f}
-  .lg.A{background:var(--acc)} .lg.B{background:var(--blue); color:#052436} .lg.C{background:var(--warn); color:#3b2a04}
+  .cal-cell .lg{width:20px; height:20px; border-radius:7px; display:flex; align-items:center; justify-content:center; font-size:11px; font-weight:800}
   .cal-cell .rz{font-size:12px; color:var(--mut)}
   .cal-picker{margin-top:14px; background:var(--card); border:1px solid var(--line); border-radius:var(--rad); padding:14px}
   .cal-picker h4{margin:0 0 10px; font-size:14px}
   .cal-picker h4 span{color:var(--mut); font-weight:400}
   .pick-row{display:flex; gap:8px; flex-wrap:wrap}
-  .pick{flex:1; min-width:64px; padding:12px 6px; border-radius:11px; border:1px solid var(--line); background:var(--card2); color:var(--txt); font-weight:700; font-size:14px; cursor:pointer}
-  .pick.A.on{background:var(--acc); color:#06210f; border-color:var(--acc)}
-  .pick.B.on{background:var(--blue); color:#052436; border-color:var(--blue)}
-  .pick.C.on{background:var(--warn); color:#3b2a04; border-color:var(--warn)}
-  .pick.rest.on{background:var(--card); border-color:var(--mut)}
+  .pick{flex:1; min-width:70px; padding:12px 6px; border-radius:11px; border:1px solid var(--line); background:var(--card2); color:var(--txt); font-weight:700; font-size:13.5px; cursor:pointer}
   .pick.clear{flex:0 0 auto; color:var(--mut)}
   .cal-stats{display:flex; gap:10px; margin-bottom:14px}
   .stat{flex:1; background:var(--card); border:1px solid var(--line); border-radius:12px; padding:12px; text-align:center}
@@ -151,13 +149,25 @@
     border:1px solid var(--line); background:var(--card2); color:var(--txt); font-weight:600; font-size:15px; cursor:pointer; text-align:left;
   }
   .prof-pick.on{border-color:var(--acc); background:rgba(74,222,128,.12)}
-  .prof-pick .av{width:30px; height:30px; border-radius:99px; background:var(--acc); color:#06210f; font-weight:800; display:flex; align-items:center; justify-content:center; font-size:14px}
-  .prof-pick.on .chk{color:var(--acc); margin-left:auto; font-weight:800}
+  .prof-pick .av{width:32px; height:32px; border-radius:99px; background:var(--acc); color:#06210f; font-weight:800; display:flex; align-items:center; justify-content:center; font-size:14px; flex:0 0 auto}
+  .prof-pick .meta{min-width:0}
+  .prof-pick .meta b{display:block; font-size:15px}
+  .prof-pick .meta small{color:var(--mut); font-size:11px; font-weight:500}
+  .prof-pick .chk{color:var(--acc); margin-left:auto; font-weight:800}
   .icon-btn{width:44px; height:44px; border-radius:11px; border:1px solid var(--line); background:var(--card2); color:var(--red); font-size:16px; cursor:pointer; flex:0 0 auto}
   .addrow{display:flex; gap:8px}
   .addrow input{flex:1; padding:11px 12px; border-radius:11px; border:1px solid var(--line); background:var(--card2); color:var(--txt); font-size:15px}
   .addrow button{padding:0 16px; border-radius:11px; border:none; background:var(--acc); color:#06210f; font-weight:700; font-size:14px; cursor:pointer}
+  /* create form */
+  .create > input{width:100%; padding:12px; border-radius:11px; border:1px solid var(--line); background:var(--card2); color:var(--txt); font-size:15px; margin-bottom:10px}
+  .type-grid{display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-bottom:12px}
+  .type-opt{text-align:left; padding:12px; border-radius:12px; border:1px solid var(--line); background:var(--card2); color:var(--txt); cursor:pointer}
+  .type-opt.on{border-color:var(--acc); background:rgba(74,222,128,.12)}
+  .type-opt b{display:block; font-size:13.5px; margin-bottom:3px}
+  .type-opt small{color:var(--mut); font-size:10.5px; line-height:1.3; display:block}
   /* routine editor */
+  .ed-day-head{display:flex; gap:8px; margin-bottom:10px}
+  .ed-day-head input{flex:1; padding:11px 12px; border-radius:11px; border:1px solid var(--acc); background:var(--card2); color:var(--txt); font-size:15px; font-weight:700}
   .ed-ex{background:var(--card); border:1px solid var(--line); border-radius:var(--rad); padding:12px; margin-bottom:10px}
   .ed-name{width:100%; padding:11px 12px; border-radius:10px; border:1px solid var(--line); background:var(--card2); color:var(--txt); font-size:15px; font-weight:600; margin-bottom:9px}
   .ed-row{display:flex; align-items:flex-end; gap:8px}
@@ -184,6 +194,8 @@
   }
   .ch-prof:active{transform:scale(.99)}
   .ch-prof .av{width:34px; height:34px; border-radius:99px; background:var(--acc); color:#06210f; font-weight:800; display:flex; align-items:center; justify-content:center; font-size:15px}
+  .ch-prof .meta{min-width:0; text-align:left}
+  .ch-prof .meta small{display:block; color:var(--mut); font-size:11px; font-weight:500}
   .ch-prof .arw{margin-left:auto; color:var(--mut); font-size:18px}
   .ch-cancel{display:block; margin:16px auto 0; background:none; border:none; color:var(--mut); font-size:14px; cursor:pointer}
   /* rest timer */
@@ -207,24 +219,37 @@
 </head>
 <body>
 <div id="app" v-cloak>
-  <!-- PROFILE CHOOSER (first entry / cambiar perfil) -->
+  <!-- PROFILE CHOOSER -->
   <div v-if="needsPick || picking" class="chooser">
     <div class="ch-box">
       <div class="ch-logo">🏋️</div>
       <h2>Gym<span>Slop</span></h2>
-      <p class="ch-sub">¿Quién entrena?</p>
-      <div class="ch-list">
-        <button v-for="name in profileNames" :key="name" class="ch-prof" @click="pickProfile(name)">
-          <span class="av">{{ name.charAt(0).toUpperCase() }}</span>
-          <span>{{ name }}</span>
-          <span class="arw">→</span>
-        </button>
+      <p class="ch-sub">{{ creating ? 'Nuevo perfil' : '¿Quién entrena?' }}</p>
+
+      <template v-if="!creating">
+        <div class="ch-list">
+          <button v-for="name in profileNames" :key="name" class="ch-prof" @click="pickProfile(name)">
+            <span class="av">{{ name.charAt(0).toUpperCase() }}</span>
+            <span class="meta"><span>{{ name }}</span><small>{{ typeLabel(profiles[name].type) }}</small></span>
+            <span class="arw">→</span>
+          </button>
+        </div>
+        <button class="btn primary" style="width:100%" @click="startCreate">＋ Crear nuevo perfil</button>
+        <button v-if="picking && !needsPick" class="ch-cancel" @click="picking=false">Cancelar</button>
+      </template>
+
+      <div v-else class="create">
+        <input v-model="newProfile" placeholder="Nombre del perfil" @keyup.enter="addProfile">
+        <div class="type-grid">
+          <button v-for="o in typeOpts" :key="o.k" class="type-opt" :class="{on:newType===o.k}" @click="newType=o.k">
+            <b>{{ o.t }}</b><small>{{ o.d }}</small>
+          </button>
+        </div>
+        <div class="rowbtns">
+          <button class="btn" @click="cancelCreate">Cancelar</button>
+          <button class="btn primary" @click="addProfile">Crear perfil</button>
+        </div>
       </div>
-      <div class="addrow">
-        <input v-model="newProfile" placeholder="Crear nuevo perfil" @keyup.enter="addProfile">
-        <button @click="addProfile">Crear</button>
-      </div>
-      <button v-if="picking && !needsPick" class="ch-cancel" @click="picking=false">Cancelar</button>
     </div>
   </div>
 
@@ -238,76 +263,81 @@
       <button :class="{on:view==='cal'}" @click="view='cal'">📅 Calendario</button>
       <button :class="{on:view==='settings'}" @click="view='settings'">⚙️ Ajustes</button>
     </div>
-    <template v-if="view==='train'">
+    <template v-if="view==='train' && days.length>1">
       <div class="tabs">
-        <button v-for="d in ['A','B','C']" :key="d" class="tab" :class="{on:d===cur}" @click="cur=d">
-          Día {{ d }}<span class="lbl">{{ dayLbl[d] }}</span>
+        <button v-for="d in days" :key="d.id" class="tab" :class="{on:d.id===cur}" @click="cur=d.id">
+          {{ d.label }}<span v-if="d.sub" class="lbl">{{ d.sub }}</span>
         </button>
       </div>
-      <div class="prog">
-        <div class="bar"><i :style="{width: pct+'%'}"></i></div>
-        <p><span>{{ doneSets }} de {{ totalSets }} series</span><span>{{ pct }}%</span></p>
-      </div>
     </template>
+    <div v-if="view==='train' && curExes.length" class="prog">
+      <div class="bar"><i :style="{width: pct+'%'}"></i></div>
+      <p><span>{{ doneSets }} de {{ totalSets }} series</span><span>{{ pct }}%</span></p>
+    </div>
   </header>
 
   <!-- ENTRENO -->
   <main v-if="view==='train'">
-    <div v-for="(ex,i) in routine[cur]" :key="cur+i" class="ex" :class="{done:isDone(i), cardio:ex.cardio}">
-      <div class="ex-h">
-        <div class="ex-n">
-          <b>{{ exName(i) }}</b>
-          <em :class="{swapped:swaps[skey(i)]!=null}">{{ swaps[skey(i)]!=null ? 'sustituto' : (ex.cardio?'cardio':'máquina') }}</em>
+    <template v-if="curExes.length">
+      <div v-for="(ex,i) in curExes" :key="cur+i" class="ex" :class="{done:isDone(i), cardio:ex.cardio}">
+        <div class="ex-h">
+          <div class="ex-n">
+            <b>{{ exName(i) }}</b>
+            <em :class="{swapped:swaps[skey(i)]!=null}">{{ swaps[skey(i)]!=null ? 'sustituto' : (ex.cardio?'cardio':'máquina') }}</em>
+          </div>
+          <div class="badge">{{ ex.cardio ? ex.r : ex.s+'×'+ex.r }}</div>
         </div>
-        <div class="badge">{{ ex.cardio ? ex.r : ex.s+'×'+ex.r }}</div>
+        <div class="ex-b">
+          <div class="sets">
+            <button v-for="j in ex.s" :key="j" class="set" :class="{on:setOn(i,j-1)}" @click="toggleSet(i,j-1)">
+              {{ ex.cardio ? '✓' : j }}
+            </button>
+          </div>
+          <div v-if="!ex.cardio" class="wt">
+            <input type="tel" inputmode="decimal" placeholder="—" v-model="ex.w">
+            <span>kg</span>
+          </div>
+        </div>
+        <template v-if="ex.backups && ex.backups.length">
+          <button class="swap-btn" @click="toggleSwap(i)">
+            🔄 {{ openSwap===i ? 'Ocultar alternativas' : 'Cambiar ejercicio' }}
+          </button>
+          <div v-if="openSwap===i" class="swap-list">
+            <button class="swap-opt" :class="{active: swaps[skey(i)]==null}" @click="chooseEx(i,null)">
+              <span>{{ ex.n }}</span><small>Principal</small>
+            </button>
+            <button v-for="(b,bi) in ex.backups" :key="bi" class="swap-opt"
+                    :class="{active: swaps[skey(i)]===bi}" @click="chooseEx(i,bi)">
+              <span>{{ b }}</span><small class="swap-tag">Backup {{ bi+1 }}</small>
+            </button>
+          </div>
+        </template>
       </div>
-      <div class="ex-b">
-        <div class="sets">
-          <button v-for="j in ex.s" :key="j" class="set" :class="{on:setOn(i,j-1)}" @click="toggleSet(i,j-1)">
-            {{ ex.cardio ? '✓' : j }}
-          </button>
-        </div>
-        <div v-if="!ex.cardio" class="wt">
-          <input type="tel" inputmode="decimal" placeholder="—" v-model="ex.w">
-          <span>kg</span>
-        </div>
+
+      <div class="rowbtns">
+        <button class="btn" @click="resetDay">↺ Reiniciar día</button>
+        <button class="btn primary" @click="finishDay">✓ Guardar en calendario</button>
       </div>
-      <template v-if="ex.backups && ex.backups.length">
-        <button class="swap-btn" @click="toggleSwap(i)">
-          🔄 {{ openSwap===i ? 'Ocultar alternativas' : 'Cambiar ejercicio' }}
-        </button>
-        <div v-if="openSwap===i" class="swap-list">
-          <button class="swap-opt" :class="{active: swaps[skey(i)]==null}" @click="chooseEx(i,null)">
-            <span>{{ ex.n }}</span><small>Principal</small>
-          </button>
-          <button v-for="(b,bi) in ex.backups" :key="bi" class="swap-opt"
-                  :class="{active: swaps[skey(i)]===bi}" @click="chooseEx(i,bi)">
-            <span>{{ b }}</span><small class="swap-tag">Backup {{ bi+1 }}</small>
-          </button>
-        </div>
-      </template>
-    </div>
+    </template>
 
-    <div class="rowbtns">
-      <button class="btn" @click="resetDay">↺ Reiniciar día</button>
-      <button class="btn primary" @click="finishDay">✓ Guardar en calendario</button>
-    </div>
-
-    <div class="notes">
-      <h3>Notas</h3>
-      <ul>
-        <li>La <b>polea (cable)</b> cuenta como máquina — guiada y fácil de controlar, sin técnica de peso libre.</li>
-        <li>¿No hay máquina libre? Toca <b>Cambiar ejercicio</b> y usa un backup equivalente.</li>
-        <li>Edita ejercicios, series, reps y peso en <b>⚙️ Ajustes → Editar rutina</b>.</li>
-        <li><b>Progresión:</b> cuando completes las series en el rango alto de reps con buena forma, sube peso.</li>
-      </ul>
-    </div>
+    <!-- empty day (clases o personalizado sin ejercicios) -->
+    <template v-else>
+      <div class="empty-state">
+        <span class="ico">{{ prof.type==='clases' ? '🧘' : '📝' }}</span>
+        <b>{{ prof.type==='clases' ? 'Perfil de clases' : 'Este día está vacío' }}</b>
+        <span v-if="prof.type==='clases'">Registra tu asistencia a clase en el calendario.</span>
+        <span v-else>Añade ejercicios en ⚙️ Ajustes → Editar rutina.</span>
+      </div>
+      <div class="rowbtns" v-if="prof.type==='clases'">
+        <button class="btn primary" @click="finishDay">✓ Registrar clase de hoy</button>
+      </div>
+    </template>
   </main>
 
   <!-- CALENDARIO -->
   <main v-if="view==='cal'">
     <div class="cal-stats">
-      <div class="stat"><b>{{ monthCount }}</b><small>entrenos este mes</small></div>
+      <div class="stat"><b>{{ monthCount }}</b><small>{{ prof.type==='clases' ? 'clases este mes' : 'entrenos este mes' }}</small></div>
       <div class="stat"><b>{{ streak }}</b><small>racha (días)</small></div>
       <div class="stat"><b>{{ totalCount }}</b><small>total registrados</small></div>
     </div>
@@ -323,7 +353,8 @@
            :class="{empty:!cell, today:cell&&cell.iso===todayIso, sel:cell&&cell.iso===selDate, rest:cell&&log[cell.iso]==='rest'}"
            @click="cell && selectDay(cell.iso)">
         <template v-if="cell">
-          <span v-if="log[cell.iso] && log[cell.iso]!=='rest'" class="lg" :class="log[cell.iso]">{{ log[cell.iso] }}</span>
+          <span v-if="log[cell.iso] && log[cell.iso]!=='rest'" class="lg"
+                :style="{background:dayColor(log[cell.iso]), color:'#0b1220'}">{{ dayAbbr(log[cell.iso]) }}</span>
           <span v-else-if="log[cell.iso]==='rest'" class="rz">💤</span>
           <span>{{ cell.day }}</span>
         </template>
@@ -332,8 +363,10 @@
     <div v-if="selDate" class="cal-picker">
       <h4>{{ selDateLabel }} <span v-if="log[selDate]">· registrado</span></h4>
       <div class="pick-row">
-        <button v-for="d in ['A','B','C']" :key="d" class="pick" :class="[d,{on:log[selDate]===d}]" @click="setLog(selDate,d)">Día {{ d }}</button>
-        <button class="pick rest" :class="{on:log[selDate]==='rest'}" @click="setLog(selDate,'rest')">💤 Descanso</button>
+        <button v-for="d in days" :key="d.id" class="pick"
+                :style="log[selDate]===d.id ? {background:dayColor(d.id),color:'#0b1220',borderColor:dayColor(d.id)} : {}"
+                @click="setLog(selDate,d.id)">{{ d.label }}</button>
+        <button class="pick" :style="log[selDate]==='rest' ? {borderColor:'var(--mut)'} : {}" @click="setLog(selDate,'rest')">💤 Descanso</button>
         <button v-if="log[selDate]" class="pick clear" @click="setLog(selDate,null)">✕</button>
       </div>
     </div>
@@ -347,56 +380,67 @@
         <div v-for="name in profileNames" :key="name" class="prof-row">
           <button class="prof-pick" :class="{on:name===active}" @click="switchProfile(name)">
             <span class="av">{{ name.charAt(0).toUpperCase() }}</span>
-            <span>{{ name }}</span>
+            <span class="meta"><b>{{ name }}</b><small>{{ typeLabel(profiles[name].type) }}</small></span>
             <span v-if="name===active" class="chk">✓</span>
           </button>
           <button v-if="profileNames.length>1" class="icon-btn" @click="deleteProfile(name)" title="Borrar perfil">🗑</button>
         </div>
       </div>
-      <div class="addrow">
-        <input v-model="newProfile" placeholder="Nuevo perfil (nombre)" @keyup.enter="addProfile">
-        <button @click="addProfile">Añadir</button>
+
+      <template v-if="!creating">
+        <div class="rowbtns" style="margin:0">
+          <button class="btn primary" @click="startCreate">＋ Crear perfil</button>
+          <button class="btn" @click="picking=true">🔀 Cambiar de perfil</button>
+        </div>
+      </template>
+      <div v-else class="create">
+        <input v-model="newProfile" placeholder="Nombre del perfil" @keyup.enter="addProfile">
+        <div class="type-grid">
+          <button v-for="o in typeOpts" :key="o.k" class="type-opt" :class="{on:newType===o.k}" @click="newType=o.k">
+            <b>{{ o.t }}</b><small>{{ o.d }}</small>
+          </button>
+        </div>
+        <div class="rowbtns" style="margin:0">
+          <button class="btn" @click="cancelCreate">Cancelar</button>
+          <button class="btn primary" @click="addProfile">Crear perfil</button>
+        </div>
       </div>
-      <button class="btn" style="margin-top:12px;flex:none;width:100%" @click="picking=true">🔀 Cambiar de perfil</button>
     </div>
 
-    <h3 class="sec">Editar rutina</h3>
-    <div class="tabs" style="margin-top:0">
-      <button v-for="d in ['A','B','C']" :key="d" class="tab" :class="{on:d===editDay}" @click="editDay=d">
-        Día {{ d }}
-      </button>
+    <h3 class="sec">Editar rutina — {{ typeLabel(prof.type) }}</h3>
+    <div class="tabs" style="margin-top:0" v-if="days.length>1">
+      <button v-for="d in days" :key="d.id" class="tab" :class="{on:d.id===editDay}" @click="editDay=d.id">{{ d.label }}</button>
     </div>
     <div style="height:12px"></div>
 
-    <div v-for="(ex,i) in routine[editDay]" :key="editDay+i" class="ed-ex">
-      <input class="ed-name" v-model="ex.n" placeholder="Nombre del ejercicio">
-      <div class="ed-row">
-        <div class="ed-field s">
-          <label>Series</label>
-          <input type="number" inputmode="numeric" min="1" max="8" v-model.number="ex.s">
-        </div>
-        <div class="ed-field r">
-          <label>Reps</label>
-          <input v-model="ex.r" placeholder="10-12">
-        </div>
-        <div class="ed-field w">
-          <label>Peso kg</label>
-          <input inputmode="decimal" v-model="ex.w" placeholder="—">
-        </div>
-        <button class="ed-del" @click="removeExercise(i)" title="Eliminar">🗑</button>
+    <template v-if="curEditDay">
+      <div class="ed-day-head">
+        <input v-model="curEditDay.label" placeholder="Nombre del día">
+        <button v-if="days.length>1" class="ed-del" @click="deleteDay(editDay)" title="Borrar día">🗑</button>
       </div>
-    </div>
 
-    <div class="rowbtns">
-      <button class="btn primary" @click="addExercise">＋ Añadir ejercicio</button>
-      <button class="btn danger" @click="resetRoutineDay">↺ Restaurar día</button>
-    </div>
+      <div v-for="(ex,i) in editExes" :key="editDay+i" class="ed-ex">
+        <input class="ed-name" v-model="ex.n" placeholder="Nombre del ejercicio">
+        <div class="ed-row">
+          <div class="ed-field s"><label>Series</label><input type="number" inputmode="numeric" min="1" max="8" v-model.number="ex.s"></div>
+          <div class="ed-field r"><label>Reps</label><input v-model="ex.r" placeholder="10-12"></div>
+          <div class="ed-field w"><label>Peso kg</label><input inputmode="decimal" v-model="ex.w" placeholder="—"></div>
+          <button class="ed-del" @click="removeExercise(i)" title="Eliminar">🗑</button>
+        </div>
+      </div>
+
+      <div class="rowbtns">
+        <button class="btn primary" @click="addExercise">＋ Ejercicio</button>
+        <button class="btn" @click="addDay">＋ Día</button>
+        <button v-if="hasTemplateDay" class="btn danger" @click="resetRoutineDay">↺ Restaurar día</button>
+      </div>
+    </template>
     <div style="height:24px"></div>
   </main>
 
   <!-- rest timer -->
-  <button v-if="view==='train'" id="tfab" @click="toggleTimer">⏱<small>DESCANSO</small></button>
-  <div v-if="view==='train' && timerOpen" id="timer">
+  <button v-if="view==='train' && curExes.length" id="tfab" @click="toggleTimer">⏱<small>DESCANSO</small></button>
+  <div v-if="view==='train' && curExes.length && timerOpen" id="timer">
     <span class="tlbl">Descanso</span>
     <b>{{ fmt(tLeft) }}</b>
     <button class="tbtn" @click="tAdjust(-15)">−</button>
@@ -407,60 +451,134 @@
 
 <script src="vue.global.prod.js"></script>
 <script>
-const TEMPLATE = {
-  A: [
-    {n:"Prensa de piernas", s:3, r:"10-12", w:"", backups:["Sentadilla Smith (guiada)","Sentadilla hack"]},
-    {n:"Press de pecho en máquina", s:3, r:"8-10", w:"", backups:["Press banca Smith (guiada)","Press pecho en polea"]},
-    {n:"Jalón al pecho (polea)", s:3, r:"8-10", w:"", backups:["Remo en máquina","Pull-over en polea"]},
-    {n:"Press de hombro en máquina", s:2, r:"10-12", w:"", backups:["Press hombro en polea","Press militar Smith"]},
-    {n:"Curl femoral tumbado (máquina)", s:3, r:"10-12", w:"", backups:["Curl femoral sentado","Peso muerto en máquina (glute drive)"]},
-    {n:"Curl bíceps con mancuerna", s:2, r:"12-15", w:"", backups:["Curl bíceps en polea","Curl bíceps en máquina"]},
-    {n:"Cinta", s:1, r:"15 min", w:"", cardio:true},
-  ],
-  B: [
-    {n:"Sentadilla hack (máquina)", s:3, r:"10-12", w:"", backups:["Prensa de piernas","Sentadilla Smith"]},
-    {n:"Press inclinado en máquina", s:3, r:"8-10", w:"", backups:["Press inclinado Smith","Press pecho superior en polea"]},
-    {n:"Remo en máquina (horizontal)", s:3, r:"8-10", w:"", backups:["Remo en polea sentado","Jalón al pecho"]},
-    {n:"Elevación lateral en polea/máquina", s:3, r:"12-15", w:"", backups:["Elevación lateral en polea (agarre opuesto)","Máquina deltoides lateral"]},
-    {n:"Hip thrust / glute drive (máquina)", s:3, r:"10-12", w:"", backups:["Puente de glúteo en máquina","Prensa de piernas (pies altos)"]},
-    {n:"Extensión tríceps en polea", s:2, r:"12-15", w:"", backups:["Press francés en polea","Fondos en máquina asistida"]},
-    {n:"Cinta", s:1, r:"15 min", w:"", cardio:true},
-  ],
-  C: [
-    {n:"Prensa de piernas (pies altos, glúteo)", s:3, r:"10-12", w:"", backups:["Hip thrust / glute drive (máquina)","Sentadilla Smith pies altos"]},
-    {n:"Press de pecho agarre cerrado (máquina)", s:3, r:"8-10", w:"", backups:["Press pecho en polea agarre cerrado","Fondos en máquina asistida"]},
-    {n:"Remo en polea baja", s:3, r:"8-10", w:"", backups:["Remo en máquina horizontal","Jalón al pecho agarre estrecho"]},
-    {n:"Face pull en polea", s:2, r:"12-15", w:"", backups:["Pájaros en polea","Remo a la cara en máquina"]},
-    {n:"Curl femoral (máquina)", s:3, r:"10-12", w:"", backups:["Peso muerto en máquina","Hip thrust / glute drive"]},
-    {n:"Plancha / core", s:3, r:"30-45s", w:"", backups:["Crunch en máquina","Rueda abdominal (si hay)"]},
-    {n:"Cinta", s:1, r:"15 min", w:"", cardio:true},
-  ],
+// ---- exercise templates by routine type ----
+const cardio = {n:"Cinta", s:1, r:"15 min", w:"", cardio:true};
+const TEMPLATES = {
+  full: {
+    label: "Full Body 3 días",
+    days: [
+      { id:"A", label:"Día A", sub:"Piernas · Empuje · Tirón", ex:[
+        {n:"Prensa de piernas", s:3, r:"10-12", w:"", backups:["Sentadilla Smith (guiada)","Sentadilla hack"]},
+        {n:"Press de pecho en máquina", s:3, r:"8-10", w:"", backups:["Press banca Smith (guiada)","Press pecho en polea"]},
+        {n:"Jalón al pecho (polea)", s:3, r:"8-10", w:"", backups:["Remo en máquina","Pull-over en polea"]},
+        {n:"Press de hombro en máquina", s:2, r:"10-12", w:"", backups:["Press hombro en polea","Press militar Smith"]},
+        {n:"Curl femoral tumbado (máquina)", s:3, r:"10-12", w:"", backups:["Curl femoral sentado","Peso muerto en máquina (glute drive)"]},
+        {n:"Curl bíceps con mancuerna", s:2, r:"12-15", w:"", backups:["Curl bíceps en polea","Curl bíceps en máquina"]},
+        cardio,
+      ]},
+      { id:"B", label:"Día B", sub:"Cuádriceps · Superior", ex:[
+        {n:"Sentadilla hack (máquina)", s:3, r:"10-12", w:"", backups:["Prensa de piernas","Sentadilla Smith"]},
+        {n:"Press inclinado en máquina", s:3, r:"8-10", w:"", backups:["Press inclinado Smith","Press pecho superior en polea"]},
+        {n:"Remo en máquina (horizontal)", s:3, r:"8-10", w:"", backups:["Remo en polea sentado","Jalón al pecho"]},
+        {n:"Elevación lateral en polea/máquina", s:3, r:"12-15", w:"", backups:["Elevación lateral en polea (agarre opuesto)","Máquina deltoides lateral"]},
+        {n:"Hip thrust / glute drive (máquina)", s:3, r:"10-12", w:"", backups:["Puente de glúteo en máquina","Prensa de piernas (pies altos)"]},
+        {n:"Extensión tríceps en polea", s:2, r:"12-15", w:"", backups:["Press francés en polea","Fondos en máquina asistida"]},
+        cardio,
+      ]},
+      { id:"C", label:"Día C", sub:"Glúteo · Espalda · Core", ex:[
+        {n:"Prensa de piernas (pies altos, glúteo)", s:3, r:"10-12", w:"", backups:["Hip thrust / glute drive (máquina)","Sentadilla Smith pies altos"]},
+        {n:"Press de pecho agarre cerrado (máquina)", s:3, r:"8-10", w:"", backups:["Press pecho en polea agarre cerrado","Fondos en máquina asistida"]},
+        {n:"Remo en polea baja", s:3, r:"8-10", w:"", backups:["Remo en máquina horizontal","Jalón al pecho agarre estrecho"]},
+        {n:"Face pull en polea", s:2, r:"12-15", w:"", backups:["Pájaros en polea","Remo a la cara en máquina"]},
+        {n:"Curl femoral (máquina)", s:3, r:"10-12", w:"", backups:["Peso muerto en máquina","Hip thrust / glute drive"]},
+        {n:"Plancha / core", s:3, r:"30-45s", w:"", backups:["Crunch en máquina","Rueda abdominal (si hay)"]},
+        cardio,
+      ]},
+    ],
+  },
+  ppl: {
+    label: "Pull Push Legs",
+    days: [
+      { id:"PULL", label:"Pull", sub:"Espalda · Bíceps", ex:[
+        {n:"Jalón al pecho (polea)", s:3, r:"8-10", w:"", backups:["Dominadas asistidas (máquina)","Jalón agarre neutro"]},
+        {n:"Remo en máquina (horizontal)", s:3, r:"8-10", w:"", backups:["Remo en polea sentado","Remo en máquina apoyado"]},
+        {n:"Remo en polea baja", s:3, r:"10-12", w:"", backups:["Remo en máquina horizontal","Jalón agarre estrecho"]},
+        {n:"Face pull en polea", s:3, r:"12-15", w:"", backups:["Pájaros en polea","Máquina deltoides posterior"]},
+        {n:"Curl bíceps en polea", s:3, r:"10-12", w:"", backups:["Curl bíceps en máquina","Curl con mancuerna"]},
+        {n:"Curl martillo con mancuerna", s:2, r:"12-15", w:"", backups:["Curl martillo en polea","Curl bíceps en máquina"]},
+        cardio,
+      ]},
+      { id:"PUSH", label:"Push", sub:"Pecho · Hombro · Tríceps", ex:[
+        {n:"Press de pecho en máquina", s:3, r:"8-10", w:"", backups:["Press banca Smith (guiada)","Press pecho en polea"]},
+        {n:"Press inclinado en máquina", s:3, r:"8-10", w:"", backups:["Press inclinado Smith","Press superior en polea"]},
+        {n:"Press de hombro en máquina", s:3, r:"10-12", w:"", backups:["Press hombro en polea","Press militar Smith"]},
+        {n:"Elevación lateral en polea/máquina", s:3, r:"12-15", w:"", backups:["Elevación lateral con mancuerna","Máquina deltoides lateral"]},
+        {n:"Extensión tríceps en polea", s:3, r:"10-12", w:"", backups:["Press francés en polea","Fondos en máquina asistida"]},
+        {n:"Extensión tríceps sobre cabeza (polea)", s:2, r:"12-15", w:"", backups:["Patada de tríceps en polea","Fondos en máquina asistida"]},
+        cardio,
+      ]},
+      { id:"LEGS", label:"Piernas", sub:"Cuádriceps · Femoral · Glúteo", ex:[
+        {n:"Prensa de piernas", s:3, r:"10-12", w:"", backups:["Sentadilla hack","Sentadilla Smith"]},
+        {n:"Sentadilla hack (máquina)", s:3, r:"10-12", w:"", backups:["Prensa de piernas","Sentadilla Smith"]},
+        {n:"Extensión de cuádriceps", s:3, r:"12-15", w:"", backups:["Prensa pies bajos","Sentadilla Smith"]},
+        {n:"Curl femoral tumbado (máquina)", s:3, r:"10-12", w:"", backups:["Curl femoral sentado","Peso muerto en máquina"]},
+        {n:"Hip thrust / glute drive (máquina)", s:3, r:"10-12", w:"", backups:["Puente de glúteo en máquina","Patada de glúteo en polea"]},
+        {n:"Elevación de gemelos en máquina", s:3, r:"12-15", w:"", backups:["Gemelo en prensa","Gemelo de pie en máquina"]},
+        cardio,
+      ]},
+    ],
+  },
+  clases: {
+    label: "Solo clases",
+    days: [ { id:"CLASE", label:"Clase", sub:"", ex:[] } ],
+  },
+  custom: {
+    label: "Personalizado",
+    days: [ { id:"D1", label:"Día 1", sub:"", ex:[] } ],
+  },
 };
-const DAY_LBL = {A:"Piernas · Empuje · Tirón", B:"Cuádriceps · Superior", C:"Glúteo · Espalda · Core"};
+const TYPE_OPTS = [
+  { k:"full",   t:"Full Body",       d:"3 días · A/B/C con backups" },
+  { k:"ppl",    t:"Pull Push Legs",  d:"3 días · tirón/empuje/pierna" },
+  { k:"clases", t:"Clases",          d:"solo calendario de clases" },
+  { k:"custom", t:"Personalizado",   d:"crea tu propia rutina" },
+];
+const PALETTE = ["#4ade80","#38bdf8","#fbbf24","#c084fc","#f472b6","#2dd4bf","#fb923c"];
+
 const DIAS = ["Domingo","Lunes","Martes","Miércoles","Jueves","Viernes","Sábado"];
 const MESES = ["enero","febrero","marzo","abril","mayo","junio","julio","agosto","septiembre","octubre","noviembre","diciembre"];
-const KEY = "gymslop.v3";
-const OLDKEY = "gymslop.v2";
+const KEY = "gymslop.v4";
 
 function clone(o){ return JSON.parse(JSON.stringify(o)); }
-function defaultRoutine(){ return clone(TEMPLATE); }
+function makeProfile(type){ return { type, days: clone(TEMPLATES[type].days), sets:{}, swaps:{}, log:{} }; }
 function iso(d){ return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0"); }
 
+function fullDaysFrom(routine){
+  return ["A","B","C"].map(id=>{
+    const tpl=TEMPLATES.full.days.find(d=>d.id===id);
+    return { id, label:tpl?tpl.label:("Día "+id), sub:tpl?tpl.sub:"", ex:(routine&&routine[id])?routine[id]:[] };
+  });
+}
+
 function loadState(){
+  // current format
   const raw = localStorage.getItem(KEY);
   if(raw){ try{ return JSON.parse(raw); }catch(e){} }
-  // migrate from single-profile v2, if present
-  const routine = defaultRoutine();
-  let prof = { routine, sets:{}, swaps:{}, log:{} };
-  const old = localStorage.getItem(OLDKEY);
-  if(old){
+
+  // migrate from v3 (profiles with fixed A/B/C routine object) -> day-array shape
+  const v3 = localStorage.getItem("gymslop.v3");
+  if(v3){
     try{
-      const o = JSON.parse(old);
-      for(const d of ["A","B","C"]) routine[d].forEach((ex,i)=>{ const w=(o.weights||{})[d+"."+i]; if(w) ex.w=w; });
-      prof = { routine, sets:o.sets||{}, swaps:o.swaps||{}, log:o.log||{} };
+      const o=JSON.parse(v3), profiles={};
+      for(const [name,p] of Object.entries(o.profiles||{})){
+        profiles[name]={ type:"full", days:fullDaysFrom(p.routine), sets:p.sets||{}, swaps:p.swaps||{}, log:p.log||{} };
+      }
+      if(Object.keys(profiles).length) return { active:o.active||"", profiles };
     }catch(e){}
   }
-  // fresh / migrated: no active profile yet -> app shows the chooser on first entry
+
+  // migrate from v2 (single profile, weights map) -> Paco full body
+  const prof = makeProfile("full");
+  const v2 = localStorage.getItem("gymslop.v2");
+  if(v2){
+    try{
+      const o=JSON.parse(v2);
+      prof.days.forEach(day=>day.ex.forEach((ex,i)=>{ const w=(o.weights||{})[day.id+"."+i]; if(w) ex.w=w; }));
+      if(o.sets) prof.sets=o.sets;
+      if(o.swaps) prof.swaps=o.swaps;
+      if(o.log) prof.log=o.log;
+    }catch(e){}
+  }
   return { active:"", profiles:{ "Paco": prof } };
 }
 
@@ -472,31 +590,33 @@ createApp({
     const now = new Date();
     return {
       view: "train",
-      cur: "A",
-      editDay: "A",
+      cur: "", editDay: "",
       active: st.active,
       profiles: st.profiles,
-      picking: false,
-      newProfile: "",
+      picking: false, creating: false,
+      newProfile: "", newType: "full",
+      typeOpts: TYPE_OPTS,
       openSwap: null,
-      dayLbl: DAY_LBL,
       todayIso: iso(now),
-      calYear: now.getFullYear(),
-      calMonth: now.getMonth(),
-      selDate: null,
-      timerOpen: false,
-      tBase: 90, tLeft: 90, tRunning: false, tHandle: null,
+      calYear: now.getFullYear(), calMonth: now.getMonth(), selDate: null,
+      timerOpen: false, tBase: 90, tLeft: 90, tRunning: false, tHandle: null,
     };
   },
+  mounted(){ this.syncDays(); },
   computed: {
     prof(){ return this.profiles[this.active] || this.profiles[Object.keys(this.profiles)[0]]; },
-    routine(){ return this.prof.routine; },
+    days(){ return this.prof.days; },
     swaps(){ return this.prof.swaps; },
     log(){ return this.prof.log; },
+    curDay(){ return this.days.find(d=>d.id===this.cur) || this.days[0]; },
+    curExes(){ return this.curDay ? this.curDay.ex : []; },
+    curEditDay(){ return this.days.find(d=>d.id===this.editDay) || this.days[0]; },
+    editExes(){ return this.curEditDay ? this.curEditDay.ex : []; },
+    hasTemplateDay(){ const t=TEMPLATES[this.prof.type]; return !!(t && t.days.find(d=>d.id===this.editDay)); },
     profileNames(){ return Object.keys(this.profiles); },
     needsPick(){ return !this.active || !this.profiles[this.active]; },
-    totalSets(){ return this.routine[this.cur].reduce((a,e)=>a+(+e.s||0),0); },
-    doneSets(){ return this.routine[this.cur].reduce((a,e,i)=>a+(this.prof.sets[this.skey(i)]||[]).filter(Boolean).length,0); },
+    totalSets(){ return this.curExes.reduce((a,e)=>a+(+e.s||0),0); },
+    doneSets(){ return this.curExes.reduce((a,e,i)=>a+(this.prof.sets[this.skey(i)]||[]).filter(Boolean).length,0); },
     pct(){ return this.totalSets ? Math.round(this.doneSets/this.totalSets*100) : 0; },
     monthName(){ return MESES[this.calMonth]; },
     calCells(){
@@ -533,14 +653,26 @@ createApp({
   },
   methods: {
     persist(){ localStorage.setItem(KEY, JSON.stringify({ active:this.active, profiles:this.profiles })); },
+    typeLabel(t){ const o=TYPE_OPTS.find(x=>x.k===t); return o?o.t:"Rutina"; },
     skey(i){ return this.cur+"."+i; },
+    syncDays(){
+      const ids=this.days.map(d=>d.id);
+      if(!ids.includes(this.cur)) this.cur = ids[0]||"";
+      if(!ids.includes(this.editDay)) this.editDay = ids[0]||"";
+    },
+    // day helpers
+    dayIndex(id){ return this.days.findIndex(d=>d.id===id); },
+    dayById(id){ return this.days.find(d=>d.id===id); },
+    dayColor(id){ const i=this.dayIndex(id); return i>=0 ? PALETTE[i%PALETTE.length] : "#5b6472"; },
+    dayAbbr(id){ const d=this.dayById(id); if(!d) return "•"; const L=(d.label||"").trim(); return L.length<=2 ? L : L.charAt(0).toUpperCase(); },
+    // training
     exName(i){
       const s=this.swaps[this.skey(i)];
-      const ex=this.routine[this.cur][i];
+      const ex=this.curExes[i];
       return (s!=null && ex.backups && ex.backups[s]!=null) ? ex.backups[s] : ex.n;
     },
     setOn(i,j){ return !!(this.prof.sets[this.skey(i)]||[])[j]; },
-    isDone(i){ return (this.prof.sets[this.skey(i)]||[]).filter(Boolean).length >= (+this.routine[this.cur][i].s||0); },
+    isDone(i){ return (this.prof.sets[this.skey(i)]||[]).filter(Boolean).length >= (+this.curExes[i].s||0); },
     toggleSet(i,j){
       const k=this.skey(i);
       const arr=(this.prof.sets[k]||[]).slice();
@@ -549,35 +681,52 @@ createApp({
       if(arr[j]) this.startRest();
     },
     toggleSwap(i){ this.openSwap = this.openSwap===i ? null : i; },
-    chooseEx(i,bi){
-      const k=this.skey(i);
-      if(bi==null) delete this.swaps[k]; else this.swaps[k]=bi;
-      this.openSwap=null;
-    },
-    resetDay(){ this.routine[this.cur].forEach((_,i)=>{ delete this.prof.sets[this.skey(i)]; }); },
+    chooseEx(i,bi){ const k=this.skey(i); if(bi==null) delete this.swaps[k]; else this.swaps[k]=bi; this.openSwap=null; },
+    resetDay(){ this.curExes.forEach((_,i)=>{ delete this.prof.sets[this.skey(i)]; }); },
     finishDay(){ this.prof.log[this.todayIso]=this.cur; this.view="cal"; this.selDate=this.todayIso; },
     // profiles
-    pickProfile(name){ this.active=name; this.picking=false; this.cur="A"; this.editDay="A"; this.openSwap=null; this.view="train"; },
-    switchProfile(name){ this.active=name; this.cur="A"; this.editDay="A"; this.openSwap=null; },
+    startCreate(){ this.creating=true; this.newProfile=""; this.newType="full"; },
+    cancelCreate(){ this.creating=false; this.newProfile=""; },
+    pickProfile(name){ this.active=name; this.picking=false; this.creating=false; this.openSwap=null; this.view="train"; this.syncDays(); },
+    switchProfile(name){ this.active=name; this.openSwap=null; this.syncDays(); },
     addProfile(){
       const n=this.newProfile.trim();
-      if(!n || this.profiles[n]) return;
-      this.profiles[n]={ routine:defaultRoutine(), sets:{}, swaps:{}, log:{} };
-      this.active=n; this.newProfile=""; this.cur="A"; this.editDay="A"; this.picking=false;
+      if(!n){ return; }
+      if(this.profiles[n]){ alert("Ya existe un perfil con ese nombre."); return; }
+      this.profiles[n]=makeProfile(this.newType);
+      this.active=n; this.newProfile=""; this.newType="full";
+      this.creating=false; this.picking=false; this.view="train";
+      this.syncDays();
     },
     deleteProfile(name){
       if(this.profileNames.length<=1) return;
-      if(!confirm(`¿Borrar el perfil "${name}" y todos sus datos?`)) return;
+      if(!confirm("¿Borrar el perfil \""+name+"\" y todos sus datos?")) return;
       delete this.profiles[name];
-      if(this.active===name) this.active=Object.keys(this.profiles)[0];
+      if(this.active===name){ this.active=Object.keys(this.profiles)[0]; this.syncDays(); }
     },
     // routine editor
     clearDaySets(day){ Object.keys(this.prof.sets).forEach(k=>{ if(k.startsWith(day+".")) delete this.prof.sets[k]; }); },
-    addExercise(){ this.routine[this.editDay].push({ n:"Nuevo ejercicio", s:3, r:"10-12", w:"" }); this.clearDaySets(this.editDay); },
-    removeExercise(i){ this.routine[this.editDay].splice(i,1); this.clearDaySets(this.editDay); },
+    addExercise(){ this.curEditDay.ex.push({ n:"Nuevo ejercicio", s:3, r:"10-12", w:"" }); this.clearDaySets(this.editDay); },
+    removeExercise(i){ this.curEditDay.ex.splice(i,1); this.clearDaySets(this.editDay); },
+    addDay(){
+      const id = "d" + Date.now().toString(36) + this.days.length;
+      this.days.push({ id, label:"Día "+(this.days.length+1), sub:"", ex:[] });
+      this.editDay = id;
+    },
+    deleteDay(id){
+      if(this.days.length<=1) return;
+      if(!confirm("¿Borrar este día y sus ejercicios?")) return;
+      const idx=this.dayIndex(id);
+      if(idx>=0) this.days.splice(idx,1);
+      this.clearDaySets(id);
+      this.syncDays();
+    },
     resetRoutineDay(){
-      if(!confirm(`¿Restaurar el día ${this.editDay} a la rutina original? Se pierden tus cambios de ese día.`)) return;
-      this.prof.routine[this.editDay]=clone(TEMPLATE[this.editDay]);
+      const t=TEMPLATES[this.prof.type];
+      const td=t && t.days.find(d=>d.id===this.editDay);
+      if(!td) return;
+      if(!confirm("¿Restaurar este día a la rutina original? Se pierden tus cambios de ese día.")) return;
+      this.curEditDay.ex = clone(td.ex);
       this.clearDaySets(this.editDay);
     },
     // calendar

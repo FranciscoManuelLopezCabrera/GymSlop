@@ -54,8 +54,13 @@
 
 App Vue 3 en un solo `index.html` (sin build). Pensada para el móvil en el gym.
 
-- **Perfiles:** al entrar por primera vez, pantalla **¿Quién entrena?** para elegir/crear perfil. La elección se guarda en el navegador y se mantiene entre sesiones (no vuelve a preguntar). Cada persona tiene su rutina, pesos y calendario. Gestión en **⚙️ Ajustes** (añadir / cambiar / borrar, o *🔀 Cambiar de perfil*). Perfil por defecto: **Paco**.
-- **Editar rutina:** en Ajustes, por día A/B/C, editas cada ejercicio: nombre (texto), series, reps y peso. Añade, elimina o restaura el día.
+- **Perfiles:** al entrar por primera vez, pantalla **¿Quién entrena?** para elegir/crear perfil. La elección se guarda en el navegador y se mantiene entre sesiones (no vuelve a preguntar). Cada persona tiene su rutina, pesos y calendario. Gestión en **⚙️ Ajustes** (crear / cambiar / borrar, o *🔀 Cambiar de perfil*). Perfil por defecto: **Paco** (Full Body).
+- **4 tipos de rutina al crear perfil:**
+  - **Full Body** — 3 días A/B/C con backups (la rutina base del README).
+  - **Pull Push Legs** — 3 días tirón / empuje / pierna, con backups.
+  - **Clases** — sin ejercicios; solo registra la asistencia a clase en el calendario.
+  - **Personalizado** — empieza vacío; añade tus días y ejercicios a mano.
+- **Editar rutina:** en Ajustes editas cada día: renombrar día, añadir/eliminar días y ejercicios; por ejercicio nombre (texto), series, reps y peso. *Restaurar día* vuelve a la plantilla original (rutinas estándar).
 - **Entreno:** pestañas Día A/B/C, marca cada serie, apunta el peso, barra de progreso.
 - **Cambiar ejercicio:** los ejercicios de la rutina original traen 2 backups; si la máquina está ocupada, tocas y usas la alternativa.
 - **Calendario:** registra qué día entrenaste (A/B/C) o descanso, con racha y contador mensual.
