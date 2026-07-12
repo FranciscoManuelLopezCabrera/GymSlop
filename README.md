@@ -7,10 +7,10 @@ App web (PWA) para consultar y registrar tu rutina de gym desde el móvil. Vue 3
 - **Perfiles multiusuario:** varias personas, cada una con su rutina, pesos y calendario propios. Al entrar la primera vez eliges/creas perfil; la elección se guarda en el navegador y se mantiene entre sesiones (no vuelve a preguntar). Gestión en **⚙️ Ajustes** (crear / cambiar / borrar).
 - **4 tipos de rutina** al crear perfil (ver tabla abajo).
 - **Editor de rutina:** por día, renombrar día, añadir/eliminar días y ejercicios; por ejercicio series, reps y peso.
-- **Picklist de ejercicios:** el nombre se elige de un catálogo de 67 ejercicios de máquina/polea, con **buscador por nombre o grupo muscular** (acento-insensible: "biceps" encuentra "Bíceps"). Modo **✏️ Texto** para nombres personalizados.
+- **Picklist de ejercicios:** el nombre se elige de un catálogo de 160+ ejercicios (máquina, polea y **peso libre**: barra, mancuernas, kettlebell, peso corporal), con **buscador por nombre o grupo muscular** (acento-insensible: "biceps" encuentra "Bíceps"). Modo **✏️ Texto** para nombres personalizados.
 - **Cambiar ejercicio en caliente:** las rutinas estándar traen 2 backups por ejercicio; si la máquina está ocupada, tocas y usas la alternativa.
 - **Entreno:** marca cada serie, apunta el peso, barra de progreso, **timer de descanso** (arranca solo al marcar serie; 90 s, ±15 s, beep + vibración).
-- **Calendario:** registra qué día entrenaste (o descanso), con racha, contador mensual y colores por día.
+- **Calendario:** registra qué día entrenaste (o descanso), con racha, contador mensual y colores por día. **Plantilla semanal:** configuras una semana tipo y la replicas en todo el mes o el año de golpe; luego ajustas los días sueltos.
 - **PWA:** funciona **offline** (service worker) y se **instala** en la pantalla de inicio (botón en Ajustes y en el selector de perfil).
 - Todo se guarda en `localStorage` del dispositivo (clave `gymslop.v4`; migra solo desde versiones anteriores).
 

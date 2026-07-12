@@ -682,7 +682,7 @@ const TYPE_OPTS = [
 const PALETTE = ["#ff6a2b","#4aa8ff","#fbbf24","#c084fc","#2dd4bf","#f472b6","#4ade80"];
 
 // ---- exercise catalog (picklist) ----
-const GROUP_ORDER = ["Cuádriceps","Femoral","Glúteo","Gemelo","Pecho","Espalda","Hombro","Bíceps","Tríceps","Core","Cardio"];
+const GROUP_ORDER = ["Cuádriceps","Femoral","Glúteo","Gemelo","Pecho","Espalda","Trapecio","Hombro","Bíceps","Tríceps","Antebrazo","Core","Cardio"];
 const EXERCISES = [
   // Cuádriceps
   {n:"Prensa de piernas", g:"Cuádriceps"},
@@ -762,6 +762,116 @@ const EXERCISES = [
   {n:"Elíptica", g:"Cardio"},
   {n:"Remo (máquina cardio)", g:"Cardio"},
   {n:"Escaladora", g:"Cardio"},
+
+  // ===== PESO LIBRE (barra / mancuernas / kettlebell / peso corporal) =====
+  // Cuádriceps
+  {n:"Sentadilla con barra (trasera)", g:"Cuádriceps"},
+  {n:"Sentadilla frontal con barra", g:"Cuádriceps"},
+  {n:"Sentadilla goblet con mancuerna", g:"Cuádriceps"},
+  {n:"Sentadilla búlgara con mancuernas", g:"Cuádriceps"},
+  {n:"Sentadilla búlgara con barra", g:"Cuádriceps"},
+  {n:"Sentadilla sumo con mancuerna", g:"Cuádriceps"},
+  {n:"Zancadas con mancuernas", g:"Cuádriceps"},
+  {n:"Zancadas caminando con barra", g:"Cuádriceps"},
+  {n:"Zancadas hacia atrás con mancuernas", g:"Cuádriceps"},
+  {n:"Zancada lateral con mancuerna", g:"Cuádriceps"},
+  {n:"Step-up con mancuernas", g:"Cuádriceps"},
+  // Femoral
+  {n:"Peso muerto convencional con barra", g:"Femoral"},
+  {n:"Peso muerto sumo con barra", g:"Femoral"},
+  {n:"Peso muerto rumano con barra", g:"Femoral"},
+  {n:"Peso muerto rumano con mancuernas", g:"Femoral"},
+  {n:"Peso muerto a una pierna con mancuernas", g:"Femoral"},
+  {n:"Peso muerto piernas rígidas con barra", g:"Femoral"},
+  {n:"Buenos días con barra", g:"Femoral"},
+  {n:"Curl nórdico", g:"Femoral"},
+  // Glúteo
+  {n:"Hip thrust con barra", g:"Glúteo"},
+  {n:"Puente de glúteo con barra", g:"Glúteo"},
+  {n:"Zancada inversa con mancuernas", g:"Glúteo"},
+  {n:"Sentadilla sumo con barra", g:"Glúteo"},
+  {n:"Kettlebell swing", g:"Glúteo"},
+  {n:"Patada de glúteo (peso corporal)", g:"Glúteo"},
+  {n:"Abducción de cadera (peso corporal)", g:"Glúteo"},
+  // Gemelo
+  {n:"Elevación de gemelos de pie con mancuernas", g:"Gemelo"},
+  {n:"Elevación de gemelos con barra", g:"Gemelo"},
+  {n:"Elevación de gemelos a una pierna", g:"Gemelo"},
+  // Pecho
+  {n:"Press de banca con barra", g:"Pecho"},
+  {n:"Press de banca inclinado con barra", g:"Pecho"},
+  {n:"Press de banca declinado con barra", g:"Pecho"},
+  {n:"Press de banca con mancuernas", g:"Pecho"},
+  {n:"Press inclinado con mancuernas", g:"Pecho"},
+  {n:"Press declinado con mancuernas", g:"Pecho"},
+  {n:"Aperturas con mancuernas", g:"Pecho"},
+  {n:"Aperturas inclinadas con mancuernas", g:"Pecho"},
+  {n:"Pullover con mancuerna", g:"Pecho"},
+  {n:"Fondos en paralelas", g:"Pecho"},
+  {n:"Flexiones", g:"Pecho"},
+  {n:"Flexiones diamante", g:"Pecho"},
+  {n:"Flexiones inclinadas", g:"Pecho"},
+  // Espalda
+  {n:"Remo con barra", g:"Espalda"},
+  {n:"Remo con barra agarre supino", g:"Espalda"},
+  {n:"Remo Pendlay con barra", g:"Espalda"},
+  {n:"Remo en T con barra", g:"Espalda"},
+  {n:"Remo con mancuerna a una mano", g:"Espalda"},
+  {n:"Remo con mancuernas (ambas)", g:"Espalda"},
+  {n:"Remo renegado con mancuernas", g:"Espalda"},
+  {n:"Dominadas", g:"Espalda"},
+  {n:"Dominadas supinas (chin-up)", g:"Espalda"},
+  {n:"Pullover con barra", g:"Espalda"},
+  // Trapecio
+  {n:"Encogimientos con barra", g:"Trapecio"},
+  {n:"Encogimientos con mancuernas", g:"Trapecio"},
+  {n:"Remo al mentón con barra", g:"Trapecio"},
+  // Hombro
+  {n:"Press militar con barra (de pie)", g:"Hombro"},
+  {n:"Press militar con mancuernas", g:"Hombro"},
+  {n:"Press Arnold con mancuernas", g:"Hombro"},
+  {n:"Push press con barra", g:"Hombro"},
+  {n:"Elevaciones laterales con mancuernas", g:"Hombro"},
+  {n:"Elevaciones frontales con mancuernas", g:"Hombro"},
+  {n:"Elevaciones frontales con barra", g:"Hombro"},
+  {n:"Pájaros con mancuernas", g:"Hombro"},
+  {n:"Remo al mentón con mancuernas", g:"Hombro"},
+  // Bíceps
+  {n:"Curl con barra", g:"Bíceps"},
+  {n:"Curl con barra Z", g:"Bíceps"},
+  {n:"Curl con mancuernas", g:"Bíceps"},
+  {n:"Curl alterno con mancuernas", g:"Bíceps"},
+  {n:"Curl concentrado con mancuerna", g:"Bíceps"},
+  {n:"Curl inclinado con mancuernas", g:"Bíceps"},
+  {n:"Curl predicador con barra Z", g:"Bíceps"},
+  {n:"Curl araña con mancuernas", g:"Bíceps"},
+  // Tríceps
+  {n:"Press francés con barra Z", g:"Tríceps"},
+  {n:"Press francés con mancuernas", g:"Tríceps"},
+  {n:"Extensión de tríceps sobre cabeza con mancuerna", g:"Tríceps"},
+  {n:"Patada de tríceps con mancuerna", g:"Tríceps"},
+  {n:"Fondos en banco", g:"Tríceps"},
+  {n:"Fondos en paralelas (tríceps)", g:"Tríceps"},
+  {n:"Press cerrado con barra", g:"Tríceps"},
+  // Antebrazo
+  {n:"Curl de muñeca con barra", g:"Antebrazo"},
+  {n:"Curl de muñeca inverso con barra", g:"Antebrazo"},
+  {n:"Curl de muñeca con mancuernas", g:"Antebrazo"},
+  {n:"Paseo del granjero con mancuernas", g:"Antebrazo"},
+  // Core
+  {n:"Russian twist con disco", g:"Core"},
+  {n:"Crunch con disco", g:"Core"},
+  {n:"Elevación de piernas colgado", g:"Core"},
+  {n:"Encogimientos colgado", g:"Core"},
+  {n:"Woodchopper con mancuerna", g:"Core"},
+  {n:"Plancha lateral", g:"Core"},
+  {n:"Sit-up con peso", g:"Core"},
+  {n:"Turkish get-up", g:"Core"},
+  // Cardio / acondicionamiento
+  {n:"Comba (saltar a la cuerda)", g:"Cardio"},
+  {n:"Battle ropes", g:"Cardio"},
+  {n:"Burpees", g:"Cardio"},
+  {n:"Sprint / correr", g:"Cardio"},
 ];
 const EX_GROUP = {}; EXERCISES.forEach(e=>{ if(!EX_GROUP[e.n]) EX_GROUP[e.n]=e.g; });
 function norm(s){ return (s||"").toLowerCase().normalize("NFD").replace(/\p{Diacritic}/gu,""); }
