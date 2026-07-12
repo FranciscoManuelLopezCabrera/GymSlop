@@ -1,5 +1,5 @@
 // GymSlop service worker — offline app shell
-const CACHE = "gymslop-v2";
+const CACHE = "gymslop-v3";
 const ASSETS = [
   "./",
   "./index.html",

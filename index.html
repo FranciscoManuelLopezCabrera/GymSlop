@@ -14,7 +14,7 @@
   :root{
     --bg:#0f1115; --card:#191d26; --card2:#212734; --line:#2a3140;
     --txt:#e8ecf3; --mut:#8a93a6; --acc:#4ade80; --acc2:#22c55e;
-    --warn:#fbbf24; --blue:#38bdf8; --rad:14px;
+    --warn:#fbbf24; --blue:#38bdf8; --red:#f87171; --rad:14px;
   }
   *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
   html,body{margin:0}
@@ -32,15 +32,16 @@
   .brand{display:flex; align-items:center; justify-content:space-between; gap:10px}
   .brand h1{font-size:19px; margin:0; letter-spacing:.3px}
   .brand h1 span{color:var(--acc)}
-  .brand small{color:var(--mut); font-weight:400; font-size:12px}
-  /* view switch */
-  .vswitch{display:flex; gap:8px; margin-top:12px; background:var(--card); border:1px solid var(--line); border-radius:12px; padding:4px}
+  .pchip{
+    display:flex; align-items:center; gap:6px; background:var(--card2); border:1px solid var(--line);
+    color:var(--txt); font-size:13px; font-weight:700; padding:7px 12px; border-radius:99px; cursor:pointer;
+  }
+  .vswitch{display:flex; gap:6px; margin-top:12px; background:var(--card); border:1px solid var(--line); border-radius:12px; padding:4px}
   .vswitch button{
     flex:1; padding:9px 0; text-align:center; border:none; background:transparent;
-    color:var(--mut); border-radius:9px; font-weight:600; font-size:14px; cursor:pointer; transition:.15s;
+    color:var(--mut); border-radius:9px; font-weight:600; font-size:13.5px; cursor:pointer; transition:.15s;
   }
   .vswitch button.on{background:var(--acc); color:#06210f}
-  /* day tabs */
   .tabs{display:flex; gap:8px; margin-top:12px}
   .tab{
     flex:1; padding:10px 0; text-align:center; border:1px solid var(--line);
@@ -55,6 +56,8 @@
   .bar>i{display:block; height:100%; width:0; background:linear-gradient(90deg,var(--acc2),var(--acc)); transition:width .3s}
   .prog p{margin:6px 2px 0; font-size:12px; color:var(--mut); display:flex; justify-content:space-between}
   main{padding:16px 14px 0; max-width:640px; margin:0 auto}
+  h3.sec{margin:22px 2px 10px; font-size:13px; color:var(--acc); text-transform:uppercase; letter-spacing:.6px}
+  h3.sec:first-child{margin-top:4px}
   /* exercise card */
   .ex{background:var(--card); border:1px solid var(--line); border-radius:var(--rad); margin-bottom:12px; overflow:hidden}
   .ex.done{border-color:var(--acc2)}
@@ -75,15 +78,13 @@
   .set.on{background:var(--acc); color:#06210f; border-color:var(--acc); transform:scale(1.04)}
   .wt{display:flex; align-items:center; gap:6px; margin-left:auto}
   .wt input{
-    width:66px; padding:9px 8px; border-radius:10px; border:1px solid var(--line);
+    width:70px; padding:9px 8px; border-radius:10px; border:1px solid var(--line);
     background:var(--card2); color:var(--txt); font-size:15px; text-align:center; font-weight:600;
   }
   .wt span{color:var(--mut); font-size:12px}
-  /* backups */
   .swap-btn{
     display:block; width:100%; text-align:left; padding:9px 14px; background:var(--card2);
-    border:none; border-top:1px solid var(--line); color:var(--mut); font-size:12.5px;
-    font-weight:600; cursor:pointer;
+    border:none; border-top:1px solid var(--line); color:var(--mut); font-size:12.5px; font-weight:600; cursor:pointer;
   }
   .swap-btn:active{background:var(--line)}
   .swap-list{border-top:1px solid var(--line); background:rgba(0,0,0,.15); padding:4px}
@@ -96,7 +97,6 @@
   .swap-opt small{color:var(--mut); font-size:11px; font-weight:600}
   .swap-opt.active small{color:#0a3b1c}
   .swap-tag{font-size:10px; color:var(--mut); text-transform:uppercase; letter-spacing:.5px}
-  /* notes */
   .notes{background:var(--card); border:1px solid var(--line); border-radius:var(--rad); padding:14px 16px; margin:6px 0 20px}
   .notes h3{margin:0 0 10px; font-size:14px; color:var(--acc)}
   .notes ul{margin:0; padding-left:18px; color:var(--mut); font-size:13.5px}
@@ -109,6 +109,7 @@
   }
   .btn:active{transform:scale(.98)}
   .btn.primary{background:var(--acc); color:#06210f; border-color:var(--acc)}
+  .btn.danger{color:var(--red); border-color:var(--red)}
   /* calendar */
   .cal-head{display:flex; align-items:center; justify-content:space-between; margin-bottom:14px}
   .cal-head b{font-size:17px; text-transform:capitalize}
@@ -124,10 +125,7 @@
   .cal-cell.today{border-color:var(--acc)}
   .cal-cell.sel{outline:2px solid var(--blue); outline-offset:-2px}
   .cal-cell.rest{background:var(--card2)}
-  .cal-cell .lg{
-    width:20px; height:20px; border-radius:7px; display:flex; align-items:center; justify-content:center;
-    font-size:11px; font-weight:800; color:#06210f;
-  }
+  .cal-cell .lg{width:20px; height:20px; border-radius:7px; display:flex; align-items:center; justify-content:center; font-size:11px; font-weight:800; color:#06210f}
   .lg.A{background:var(--acc)} .lg.B{background:var(--blue); color:#052436} .lg.C{background:var(--warn); color:#3b2a04}
   .cal-cell .rz{font-size:12px; color:var(--mut)}
   .cal-picker{margin-top:14px; background:var(--card); border:1px solid var(--line); border-radius:var(--rad); padding:14px}
@@ -144,6 +142,30 @@
   .stat{flex:1; background:var(--card); border:1px solid var(--line); border-radius:12px; padding:12px; text-align:center}
   .stat b{display:block; font-size:24px; color:var(--acc)}
   .stat small{color:var(--mut); font-size:11px}
+  /* settings / profiles */
+  .card-box{background:var(--card); border:1px solid var(--line); border-radius:var(--rad); padding:14px; margin-bottom:12px}
+  .prof-list{display:flex; flex-direction:column; gap:8px; margin-bottom:12px}
+  .prof-row{display:flex; align-items:center; gap:10px}
+  .prof-pick{
+    flex:1; display:flex; align-items:center; gap:10px; padding:12px 14px; border-radius:11px;
+    border:1px solid var(--line); background:var(--card2); color:var(--txt); font-weight:600; font-size:15px; cursor:pointer; text-align:left;
+  }
+  .prof-pick.on{border-color:var(--acc); background:rgba(74,222,128,.12)}
+  .prof-pick .av{width:30px; height:30px; border-radius:99px; background:var(--acc); color:#06210f; font-weight:800; display:flex; align-items:center; justify-content:center; font-size:14px}
+  .prof-pick.on .chk{color:var(--acc); margin-left:auto; font-weight:800}
+  .icon-btn{width:44px; height:44px; border-radius:11px; border:1px solid var(--line); background:var(--card2); color:var(--red); font-size:16px; cursor:pointer; flex:0 0 auto}
+  .addrow{display:flex; gap:8px}
+  .addrow input{flex:1; padding:11px 12px; border-radius:11px; border:1px solid var(--line); background:var(--card2); color:var(--txt); font-size:15px}
+  .addrow button{padding:0 16px; border-radius:11px; border:none; background:var(--acc); color:#06210f; font-weight:700; font-size:14px; cursor:pointer}
+  /* routine editor */
+  .ed-ex{background:var(--card); border:1px solid var(--line); border-radius:var(--rad); padding:12px; margin-bottom:10px}
+  .ed-name{width:100%; padding:11px 12px; border-radius:10px; border:1px solid var(--line); background:var(--card2); color:var(--txt); font-size:15px; font-weight:600; margin-bottom:9px}
+  .ed-row{display:flex; align-items:flex-end; gap:8px}
+  .ed-field{display:flex; flex-direction:column; gap:4px}
+  .ed-field.s{width:62px} .ed-field.r{flex:1} .ed-field.w{width:78px}
+  .ed-field label{font-size:10.5px; color:var(--mut); text-transform:uppercase; letter-spacing:.4px; padding-left:2px}
+  .ed-field input{width:100%; padding:10px 8px; border-radius:10px; border:1px solid var(--line); background:var(--card2); color:var(--txt); font-size:15px; text-align:center; font-weight:600}
+  .ed-del{width:44px; height:42px; border-radius:10px; border:1px solid var(--line); background:var(--card2); color:var(--red); font-size:16px; cursor:pointer; flex:0 0 auto}
   /* rest timer */
   #timer{
     position:fixed; left:50%; transform:translateX(-50%); bottom:calc(16px + env(safe-area-inset-bottom));
@@ -167,12 +189,13 @@
 <div id="app" v-cloak>
   <header>
     <div class="brand">
-      <h1>Gym<span>Slop</span> <small>Full Body · 3 días</small></h1>
-      <small>{{ todayLabel }}</small>
+      <h1>Gym<span>Slop</span></h1>
+      <button class="pchip" @click="view='settings'">👤 {{ active }}</button>
     </div>
     <div class="vswitch">
       <button :class="{on:view==='train'}" @click="view='train'">🏋️ Entreno</button>
       <button :class="{on:view==='cal'}" @click="view='cal'">📅 Calendario</button>
+      <button :class="{on:view==='settings'}" @click="view='settings'">⚙️ Ajustes</button>
     </div>
     <template v-if="view==='train'">
       <div class="tabs">
@@ -189,7 +212,7 @@
 
   <!-- ENTRENO -->
   <main v-if="view==='train'">
-    <div v-for="(ex,i) in rutina[cur]" :key="cur+i" class="ex" :class="{done:isDone(i), cardio:ex.cardio}">
+    <div v-for="(ex,i) in routine[cur]" :key="cur+i" class="ex" :class="{done:isDone(i), cardio:ex.cardio}">
       <div class="ex-h">
         <div class="ex-n">
           <b>{{ exName(i) }}</b>
@@ -204,8 +227,7 @@
           </button>
         </div>
         <div v-if="!ex.cardio" class="wt">
-          <input type="tel" inputmode="decimal" placeholder="—"
-                 :value="weights[skey(i)]||''" @input="setWeight(i,$event.target.value)">
+          <input type="tel" inputmode="decimal" placeholder="—" v-model="ex.w">
           <span>kg</span>
         </div>
       </div>
@@ -235,8 +257,8 @@
       <ul>
         <li>La <b>polea (cable)</b> cuenta como máquina — guiada y fácil de controlar, sin técnica de peso libre.</li>
         <li>¿No hay máquina libre? Toca <b>Cambiar ejercicio</b> y usa un backup equivalente.</li>
+        <li>Edita ejercicios, series, reps y peso en <b>⚙️ Ajustes → Editar rutina</b>.</li>
         <li><b>Progresión:</b> cuando completes las series en el rango alto de reps con buena forma, sube peso.</li>
-        <li><b>Distribución:</b> lunes · miércoles · viernes (o día sí día no), mínimo 48h entre sesiones.</li>
       </ul>
     </div>
   </main>
@@ -248,13 +270,11 @@
       <div class="stat"><b>{{ streak }}</b><small>racha (días)</small></div>
       <div class="stat"><b>{{ totalCount }}</b><small>total registrados</small></div>
     </div>
-
     <div class="cal-head">
       <button class="cal-nav" @click="shiftMonth(-1)">‹</button>
       <b>{{ monthName }} {{ calYear }}</b>
       <button class="cal-nav" @click="shiftMonth(1)">›</button>
     </div>
-
     <div class="cal-grid">
       <div v-for="d in ['L','M','X','J','V','S','D']" :key="'h'+d" class="cal-dow">{{ d }}</div>
       <div v-for="(cell,idx) in calCells" :key="'c'+idx"
@@ -268,7 +288,6 @@
         </template>
       </div>
     </div>
-
     <div v-if="selDate" class="cal-picker">
       <h4>{{ selDateLabel }} <span v-if="log[selDate]">· registrado</span></h4>
       <div class="pick-row">
@@ -277,6 +296,60 @@
         <button v-if="log[selDate]" class="pick clear" @click="setLog(selDate,null)">✕</button>
       </div>
     </div>
+  </main>
+
+  <!-- AJUSTES -->
+  <main v-if="view==='settings'">
+    <h3 class="sec">Perfil</h3>
+    <div class="card-box">
+      <div class="prof-list">
+        <div v-for="name in profileNames" :key="name" class="prof-row">
+          <button class="prof-pick" :class="{on:name===active}" @click="switchProfile(name)">
+            <span class="av">{{ name.charAt(0).toUpperCase() }}</span>
+            <span>{{ name }}</span>
+            <span v-if="name===active" class="chk">✓</span>
+          </button>
+          <button v-if="profileNames.length>1" class="icon-btn" @click="deleteProfile(name)" title="Borrar perfil">🗑</button>
+        </div>
+      </div>
+      <div class="addrow">
+        <input v-model="newProfile" placeholder="Nuevo perfil (nombre)" @keyup.enter="addProfile">
+        <button @click="addProfile">Añadir</button>
+      </div>
+    </div>
+
+    <h3 class="sec">Editar rutina</h3>
+    <div class="tabs" style="margin-top:0">
+      <button v-for="d in ['A','B','C']" :key="d" class="tab" :class="{on:d===editDay}" @click="editDay=d">
+        Día {{ d }}
+      </button>
+    </div>
+    <div style="height:12px"></div>
+
+    <div v-for="(ex,i) in routine[editDay]" :key="editDay+i" class="ed-ex">
+      <input class="ed-name" v-model="ex.n" placeholder="Nombre del ejercicio">
+      <div class="ed-row">
+        <div class="ed-field s">
+          <label>Series</label>
+          <input type="number" inputmode="numeric" min="1" max="8" v-model.number="ex.s">
+        </div>
+        <div class="ed-field r">
+          <label>Reps</label>
+          <input v-model="ex.r" placeholder="10-12">
+        </div>
+        <div class="ed-field w">
+          <label>Peso kg</label>
+          <input inputmode="decimal" v-model="ex.w" placeholder="—">
+        </div>
+        <button class="ed-del" @click="removeExercise(i)" title="Eliminar">🗑</button>
+      </div>
+    </div>
+
+    <div class="rowbtns">
+      <button class="btn primary" @click="addExercise">＋ Añadir ejercicio</button>
+      <button class="btn danger" @click="resetRoutineDay">↺ Restaurar día</button>
+    </div>
+    <div style="height:24px"></div>
   </main>
 
   <!-- rest timer -->
@@ -292,87 +365,102 @@
 
 <script src="vue.global.prod.js"></script>
 <script>
-const RUTINA = {
+const TEMPLATE = {
   A: [
-    {n:"Prensa de piernas", s:3, r:"10-12", backups:["Sentadilla Smith (guiada)","Sentadilla hack"]},
-    {n:"Press de pecho en máquina", s:3, r:"8-10", backups:["Press banca Smith (guiada)","Press pecho en polea"]},
-    {n:"Jalón al pecho (polea)", s:3, r:"8-10", backups:["Remo en máquina","Pull-over en polea"]},
-    {n:"Press de hombro en máquina", s:2, r:"10-12", backups:["Press hombro en polea","Press militar Smith"]},
-    {n:"Curl femoral tumbado (máquina)", s:3, r:"10-12", backups:["Curl femoral sentado","Peso muerto en máquina (glute drive)"]},
-    {n:"Curl bíceps con mancuerna", s:2, r:"12-15", backups:["Curl bíceps en polea","Curl bíceps en máquina"]},
-    {n:"Cinta", s:1, r:"15 min", cardio:true},
+    {n:"Prensa de piernas", s:3, r:"10-12", w:"", backups:["Sentadilla Smith (guiada)","Sentadilla hack"]},
+    {n:"Press de pecho en máquina", s:3, r:"8-10", w:"", backups:["Press banca Smith (guiada)","Press pecho en polea"]},
+    {n:"Jalón al pecho (polea)", s:3, r:"8-10", w:"", backups:["Remo en máquina","Pull-over en polea"]},
+    {n:"Press de hombro en máquina", s:2, r:"10-12", w:"", backups:["Press hombro en polea","Press militar Smith"]},
+    {n:"Curl femoral tumbado (máquina)", s:3, r:"10-12", w:"", backups:["Curl femoral sentado","Peso muerto en máquina (glute drive)"]},
+    {n:"Curl bíceps con mancuerna", s:2, r:"12-15", w:"", backups:["Curl bíceps en polea","Curl bíceps en máquina"]},
+    {n:"Cinta", s:1, r:"15 min", w:"", cardio:true},
   ],
   B: [
-    {n:"Sentadilla hack (máquina)", s:3, r:"10-12", backups:["Prensa de piernas","Sentadilla Smith"]},
-    {n:"Press inclinado en máquina", s:3, r:"8-10", backups:["Press inclinado Smith","Press pecho superior en polea"]},
-    {n:"Remo en máquina (horizontal)", s:3, r:"8-10", backups:["Remo en polea sentado","Jalón al pecho"]},
-    {n:"Elevación lateral en polea/máquina", s:3, r:"12-15", backups:["Elevación lateral en polea (agarre opuesto)","Máquina deltoides lateral"]},
-    {n:"Hip thrust / glute drive (máquina)", s:3, r:"10-12", backups:["Puente de glúteo en máquina","Prensa de piernas (pies altos)"]},
-    {n:"Extensión tríceps en polea", s:2, r:"12-15", backups:["Press francés en polea","Fondos en máquina asistida"]},
-    {n:"Cinta", s:1, r:"15 min", cardio:true},
+    {n:"Sentadilla hack (máquina)", s:3, r:"10-12", w:"", backups:["Prensa de piernas","Sentadilla Smith"]},
+    {n:"Press inclinado en máquina", s:3, r:"8-10", w:"", backups:["Press inclinado Smith","Press pecho superior en polea"]},
+    {n:"Remo en máquina (horizontal)", s:3, r:"8-10", w:"", backups:["Remo en polea sentado","Jalón al pecho"]},
+    {n:"Elevación lateral en polea/máquina", s:3, r:"12-15", w:"", backups:["Elevación lateral en polea (agarre opuesto)","Máquina deltoides lateral"]},
+    {n:"Hip thrust / glute drive (máquina)", s:3, r:"10-12", w:"", backups:["Puente de glúteo en máquina","Prensa de piernas (pies altos)"]},
+    {n:"Extensión tríceps en polea", s:2, r:"12-15", w:"", backups:["Press francés en polea","Fondos en máquina asistida"]},
+    {n:"Cinta", s:1, r:"15 min", w:"", cardio:true},
   ],
   C: [
-    {n:"Prensa de piernas (pies altos, glúteo)", s:3, r:"10-12", backups:["Hip thrust / glute drive (máquina)","Sentadilla Smith pies altos"]},
-    {n:"Press de pecho agarre cerrado (máquina)", s:3, r:"8-10", backups:["Press pecho en polea agarre cerrado","Fondos en máquina asistida"]},
-    {n:"Remo en polea baja", s:3, r:"8-10", backups:["Remo en máquina horizontal","Jalón al pecho agarre estrecho"]},
-    {n:"Face pull en polea", s:2, r:"12-15", backups:["Pájaros en polea","Remo a la cara en máquina"]},
-    {n:"Curl femoral (máquina)", s:3, r:"10-12", backups:["Peso muerto en máquina","Hip thrust / glute drive"]},
-    {n:"Plancha / core", s:3, r:"30-45s", backups:["Crunch en máquina","Rueda abdominal (si hay)"]},
-    {n:"Cinta", s:1, r:"15 min", cardio:true},
+    {n:"Prensa de piernas (pies altos, glúteo)", s:3, r:"10-12", w:"", backups:["Hip thrust / glute drive (máquina)","Sentadilla Smith pies altos"]},
+    {n:"Press de pecho agarre cerrado (máquina)", s:3, r:"8-10", w:"", backups:["Press pecho en polea agarre cerrado","Fondos en máquina asistida"]},
+    {n:"Remo en polea baja", s:3, r:"8-10", w:"", backups:["Remo en máquina horizontal","Jalón al pecho agarre estrecho"]},
+    {n:"Face pull en polea", s:2, r:"12-15", w:"", backups:["Pájaros en polea","Remo a la cara en máquina"]},
+    {n:"Curl femoral (máquina)", s:3, r:"10-12", w:"", backups:["Peso muerto en máquina","Hip thrust / glute drive"]},
+    {n:"Plancha / core", s:3, r:"30-45s", w:"", backups:["Crunch en máquina","Rueda abdominal (si hay)"]},
+    {n:"Cinta", s:1, r:"15 min", w:"", cardio:true},
   ],
 };
 const DAY_LBL = {A:"Piernas · Empuje · Tirón", B:"Cuádriceps · Superior", C:"Glúteo · Espalda · Core"};
 const DIAS = ["Domingo","Lunes","Martes","Miércoles","Jueves","Viernes","Sábado"];
 const MESES = ["enero","febrero","marzo","abril","mayo","junio","julio","agosto","septiembre","octubre","noviembre","diciembre"];
-const KEY = "gymslop.v2";
+const KEY = "gymslop.v3";
+const OLDKEY = "gymslop.v2";
 
+function clone(o){ return JSON.parse(JSON.stringify(o)); }
+function defaultRoutine(){ return clone(TEMPLATE); }
 function iso(d){ return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0"); }
+
+function loadState(){
+  const raw = localStorage.getItem(KEY);
+  if(raw){ try{ return JSON.parse(raw); }catch(e){} }
+  // migrate from single-profile v2, if present
+  const routine = defaultRoutine();
+  let prof = { routine, sets:{}, swaps:{}, log:{} };
+  const old = localStorage.getItem(OLDKEY);
+  if(old){
+    try{
+      const o = JSON.parse(old);
+      for(const d of ["A","B","C"]) routine[d].forEach((ex,i)=>{ const w=(o.weights||{})[d+"."+i]; if(w) ex.w=w; });
+      prof = { routine, sets:o.sets||{}, swaps:o.swaps||{}, log:o.log||{} };
+    }catch(e){}
+  }
+  return { active:"Paco", profiles:{ "Paco": prof } };
+}
 
 const { createApp } = Vue;
 
 createApp({
   data(){
-    const saved = JSON.parse(localStorage.getItem(KEY) || "{}");
+    const st = loadState();
     const now = new Date();
     return {
       view: "train",
-      cur: saved.cur || "A",
-      sets: saved.sets || {},       // "A.0" -> [true,false,...]
-      weights: saved.weights || {}, // "A.0" -> "40"
-      swaps: saved.swaps || {},     // "A.0" -> backup index (0/1) or absent
-      log: saved.log || {},         // "2026-07-12" -> "A"|"B"|"C"|"rest"
+      cur: "A",
+      editDay: "A",
+      active: st.active,
+      profiles: st.profiles,
+      newProfile: "",
       openSwap: null,
       dayLbl: DAY_LBL,
-      rutina: RUTINA,
       todayIso: iso(now),
       calYear: now.getFullYear(),
       calMonth: now.getMonth(),
       selDate: null,
-      // timer
       timerOpen: false,
-      tBase: 90,
-      tLeft: 90,
-      tRunning: false,
-      tHandle: null,
+      tBase: 90, tLeft: 90, tRunning: false, tHandle: null,
     };
   },
   computed: {
-    todayLabel(){ return DIAS[new Date().getDay()]; },
-    totalSets(){ return RUTINA[this.cur].reduce((a,e)=>a+e.s,0); },
-    doneSets(){
-      return RUTINA[this.cur].reduce((a,e,i)=>a+(this.sets[this.skey(i)]||[]).filter(Boolean).length,0);
-    },
+    prof(){ return this.profiles[this.active] || this.profiles[Object.keys(this.profiles)[0]]; },
+    routine(){ return this.prof.routine; },
+    swaps(){ return this.prof.swaps; },
+    log(){ return this.prof.log; },
+    profileNames(){ return Object.keys(this.profiles); },
+    totalSets(){ return this.routine[this.cur].reduce((a,e)=>a+(+e.s||0),0); },
+    doneSets(){ return this.routine[this.cur].reduce((a,e,i)=>a+(this.prof.sets[this.skey(i)]||[]).filter(Boolean).length,0); },
     pct(){ return this.totalSets ? Math.round(this.doneSets/this.totalSets*100) : 0; },
     monthName(){ return MESES[this.calMonth]; },
     calCells(){
       const first = new Date(this.calYear, this.calMonth, 1);
-      const lead = (first.getDay()+6)%7;               // Monday-first offset
+      const lead = (first.getDay()+6)%7;
       const days = new Date(this.calYear, this.calMonth+1, 0).getDate();
       const cells = [];
       for(let i=0;i<lead;i++) cells.push(null);
-      for(let d=1;d<=days;d++){
-        cells.push({ day:d, iso:iso(new Date(this.calYear, this.calMonth, d)) });
-      }
+      for(let d=1;d<=days;d++) cells.push({ day:d, iso:iso(new Date(this.calYear, this.calMonth, d)) });
       return cells;
     },
     monthCount(){
@@ -382,12 +470,11 @@ createApp({
     totalCount(){ return Object.values(this.log).filter(v=>v!=="rest").length; },
     streak(){
       let n=0; const d=new Date();
-      // if today not logged, start counting from yesterday
       if(!this.log[iso(d)]) d.setDate(d.getDate()-1);
       while(true){
-        const k=iso(d), v=this.log[k];
+        const v=this.log[iso(d)];
         if(v && v!=="rest"){ n++; d.setDate(d.getDate()-1); }
-        else if(v==="rest"){ d.setDate(d.getDate()-1); }   // rest day doesn't break streak
+        else if(v==="rest"){ d.setDate(d.getDate()-1); }
         else break;
       }
       return n;
@@ -400,54 +487,57 @@ createApp({
     },
   },
   methods: {
-    persist(){
-      localStorage.setItem(KEY, JSON.stringify({
-        cur:this.cur, sets:this.sets, weights:this.weights, swaps:this.swaps, log:this.log
-      }));
-    },
+    persist(){ localStorage.setItem(KEY, JSON.stringify({ active:this.active, profiles:this.profiles })); },
     skey(i){ return this.cur+"."+i; },
     exName(i){
       const s=this.swaps[this.skey(i)];
-      const ex=RUTINA[this.cur][i];
+      const ex=this.routine[this.cur][i];
       return (s!=null && ex.backups && ex.backups[s]!=null) ? ex.backups[s] : ex.n;
     },
-    setOn(i,j){ return !!(this.sets[this.skey(i)]||[])[j]; },
-    isDone(i){
-      const ex=RUTINA[this.cur][i];
-      return (this.sets[this.skey(i)]||[]).filter(Boolean).length >= ex.s;
-    },
+    setOn(i,j){ return !!(this.prof.sets[this.skey(i)]||[])[j]; },
+    isDone(i){ return (this.prof.sets[this.skey(i)]||[]).filter(Boolean).length >= (+this.routine[this.cur][i].s||0); },
     toggleSet(i,j){
       const k=this.skey(i);
-      const arr=(this.sets[k]||[]).slice();
+      const arr=(this.prof.sets[k]||[]).slice();
       arr[j]=!arr[j];
-      this.sets[k]=arr;
+      this.prof.sets[k]=arr;
       if(arr[j]) this.startRest();
     },
-    setWeight(i,v){ this.weights[this.skey(i)]=v; },
     toggleSwap(i){ this.openSwap = this.openSwap===i ? null : i; },
     chooseEx(i,bi){
       const k=this.skey(i);
       if(bi==null) delete this.swaps[k]; else this.swaps[k]=bi;
       this.openSwap=null;
     },
-    resetDay(){
-      RUTINA[this.cur].forEach((_,i)=>{ delete this.sets[this.skey(i)]; });
+    resetDay(){ this.routine[this.cur].forEach((_,i)=>{ delete this.prof.sets[this.skey(i)]; }); },
+    finishDay(){ this.prof.log[this.todayIso]=this.cur; this.view="cal"; this.selDate=this.todayIso; },
+    // profiles
+    switchProfile(name){ this.active=name; this.cur="A"; this.editDay="A"; this.openSwap=null; },
+    addProfile(){
+      const n=this.newProfile.trim();
+      if(!n || this.profiles[n]) return;
+      this.profiles[n]={ routine:defaultRoutine(), sets:{}, swaps:{}, log:{} };
+      this.active=n; this.newProfile=""; this.cur="A"; this.editDay="A";
     },
-    finishDay(){
-      this.log[this.todayIso]=this.cur;
-      this.view="cal";
-      this.selDate=this.todayIso;
+    deleteProfile(name){
+      if(this.profileNames.length<=1) return;
+      if(!confirm(`¿Borrar el perfil "${name}" y todos sus datos?`)) return;
+      delete this.profiles[name];
+      if(this.active===name) this.active=Object.keys(this.profiles)[0];
+    },
+    // routine editor
+    clearDaySets(day){ Object.keys(this.prof.sets).forEach(k=>{ if(k.startsWith(day+".")) delete this.prof.sets[k]; }); },
+    addExercise(){ this.routine[this.editDay].push({ n:"Nuevo ejercicio", s:3, r:"10-12", w:"" }); this.clearDaySets(this.editDay); },
+    removeExercise(i){ this.routine[this.editDay].splice(i,1); this.clearDaySets(this.editDay); },
+    resetRoutineDay(){
+      if(!confirm(`¿Restaurar el día ${this.editDay} a la rutina original? Se pierden tus cambios de ese día.`)) return;
+      this.prof.routine[this.editDay]=clone(TEMPLATE[this.editDay]);
+      this.clearDaySets(this.editDay);
     },
     // calendar
-    shiftMonth(n){
-      let m=this.calMonth+n, y=this.calYear;
-      if(m<0){m=11;y--;} if(m>11){m=0;y++;}
-      this.calMonth=m; this.calYear=y;
-    },
+    shiftMonth(n){ let m=this.calMonth+n, y=this.calYear; if(m<0){m=11;y--;} if(m>11){m=0;y++;} this.calMonth=m; this.calYear=y; },
     selectDay(k){ this.selDate = this.selDate===k ? null : k; },
-    setLog(k,v){
-      if(v==null) delete this.log[k]; else this.log[k]=v;
-    },
+    setLog(k,v){ if(v==null) delete this.prof.log[k]; else this.prof.log[k]=v; },
     // timer
     fmt(s){ return Math.floor(s/60)+":"+String(s%60).padStart(2,"0"); },
     toggleTimer(){ this.timerOpen=!this.timerOpen; this.tStop(); this.tLeft=this.tBase; },
@@ -456,10 +546,7 @@ createApp({
       if(this.tHandle) return;
       if(this.tLeft<=0) this.tLeft=this.tBase;
       this.tRunning=true;
-      this.tHandle=setInterval(()=>{
-        this.tLeft--;
-        if(this.tLeft<=0){ this.tLeft=0; this.tStop(); this.beep(); }
-      },1000);
+      this.tHandle=setInterval(()=>{ this.tLeft--; if(this.tLeft<=0){ this.tLeft=0; this.tStop(); this.beep(); } },1000);
     },
     tStop(){ clearInterval(this.tHandle); this.tHandle=null; this.tRunning=false; },
     tToggle(){ this.tRunning ? this.tStop() : this.tRun(); },
@@ -478,16 +565,11 @@ createApp({
     },
   },
   watch: {
-    // persist only saved state (not timer ticks)
-    cur: "persist",
-    sets: { deep: true, handler: "persist" },
-    weights: { deep: true, handler: "persist" },
-    swaps: { deep: true, handler: "persist" },
-    log: { deep: true, handler: "persist" },
+    active: "persist",
+    profiles: { deep: true, handler: "persist" },
   },
 }).mount("#app");
 
-// PWA offline
 if("serviceWorker" in navigator){
   window.addEventListener("load", ()=> navigator.serviceWorker.register("sw.js").catch(()=>{}));
 }
