@@ -166,6 +166,26 @@
   .ed-field label{font-size:10.5px; color:var(--mut); text-transform:uppercase; letter-spacing:.4px; padding-left:2px}
   .ed-field input{width:100%; padding:10px 8px; border-radius:10px; border:1px solid var(--line); background:var(--card2); color:var(--txt); font-size:15px; text-align:center; font-weight:600}
   .ed-del{width:44px; height:42px; border-radius:10px; border:1px solid var(--line); background:var(--card2); color:var(--red); font-size:16px; cursor:pointer; flex:0 0 auto}
+  /* profile chooser */
+  .chooser{
+    position:fixed; inset:0; z-index:100; background:var(--bg); overflow-y:auto;
+    display:flex; align-items:center; justify-content:center;
+    padding:24px 22px calc(24px + env(safe-area-inset-bottom)); padding-top:calc(24px + env(safe-area-inset-top));
+  }
+  .ch-box{width:100%; max-width:400px}
+  .ch-logo{font-size:46px; text-align:center; line-height:1}
+  .ch-box h2{text-align:center; margin:8px 0 2px; font-size:26px; letter-spacing:.3px}
+  .ch-box h2 span{color:var(--acc)}
+  .ch-sub{text-align:center; color:var(--mut); margin:0 0 22px; font-size:14px}
+  .ch-list{display:flex; flex-direction:column; gap:10px; margin-bottom:16px}
+  .ch-prof{
+    display:flex; align-items:center; gap:12px; padding:14px 16px; border-radius:13px;
+    border:1px solid var(--line); background:var(--card); color:var(--txt); font-size:16px; font-weight:700; cursor:pointer;
+  }
+  .ch-prof:active{transform:scale(.99)}
+  .ch-prof .av{width:34px; height:34px; border-radius:99px; background:var(--acc); color:#06210f; font-weight:800; display:flex; align-items:center; justify-content:center; font-size:15px}
+  .ch-prof .arw{margin-left:auto; color:var(--mut); font-size:18px}
+  .ch-cancel{display:block; margin:16px auto 0; background:none; border:none; color:var(--mut); font-size:14px; cursor:pointer}
   /* rest timer */
   #timer{
     position:fixed; left:50%; transform:translateX(-50%); bottom:calc(16px + env(safe-area-inset-bottom));
@@ -187,6 +207,27 @@
 </head>
 <body>
 <div id="app" v-cloak>
+  <!-- PROFILE CHOOSER (first entry / cambiar perfil) -->
+  <div v-if="needsPick || picking" class="chooser">
+    <div class="ch-box">
+      <div class="ch-logo">🏋️</div>
+      <h2>Gym<span>Slop</span></h2>
+      <p class="ch-sub">¿Quién entrena?</p>
+      <div class="ch-list">
+        <button v-for="name in profileNames" :key="name" class="ch-prof" @click="pickProfile(name)">
+          <span class="av">{{ name.charAt(0).toUpperCase() }}</span>
+          <span>{{ name }}</span>
+          <span class="arw">→</span>
+        </button>
+      </div>
+      <div class="addrow">
+        <input v-model="newProfile" placeholder="Crear nuevo perfil" @keyup.enter="addProfile">
+        <button @click="addProfile">Crear</button>
+      </div>
+      <button v-if="picking && !needsPick" class="ch-cancel" @click="picking=false">Cancelar</button>
+    </div>
+  </div>
+
   <header>
     <div class="brand">
       <h1>Gym<span>Slop</span></h1>
@@ -316,6 +357,7 @@
         <input v-model="newProfile" placeholder="Nuevo perfil (nombre)" @keyup.enter="addProfile">
         <button @click="addProfile">Añadir</button>
       </div>
+      <button class="btn" style="margin-top:12px;flex:none;width:100%" @click="picking=true">🔀 Cambiar de perfil</button>
     </div>
 
     <h3 class="sec">Editar rutina</h3>
@@ -418,7 +460,8 @@ function loadState(){
       prof = { routine, sets:o.sets||{}, swaps:o.swaps||{}, log:o.log||{} };
     }catch(e){}
   }
-  return { active:"Paco", profiles:{ "Paco": prof } };
+  // fresh / migrated: no active profile yet -> app shows the chooser on first entry
+  return { active:"", profiles:{ "Paco": prof } };
 }
 
 const { createApp } = Vue;
@@ -433,6 +476,7 @@ createApp({
       editDay: "A",
       active: st.active,
       profiles: st.profiles,
+      picking: false,
       newProfile: "",
       openSwap: null,
       dayLbl: DAY_LBL,
@@ -450,6 +494,7 @@ createApp({
     swaps(){ return this.prof.swaps; },
     log(){ return this.prof.log; },
     profileNames(){ return Object.keys(this.profiles); },
+    needsPick(){ return !this.active || !this.profiles[this.active]; },
     totalSets(){ return this.routine[this.cur].reduce((a,e)=>a+(+e.s||0),0); },
     doneSets(){ return this.routine[this.cur].reduce((a,e,i)=>a+(this.prof.sets[this.skey(i)]||[]).filter(Boolean).length,0); },
     pct(){ return this.totalSets ? Math.round(this.doneSets/this.totalSets*100) : 0; },
@@ -512,12 +557,13 @@ createApp({
     resetDay(){ this.routine[this.cur].forEach((_,i)=>{ delete this.prof.sets[this.skey(i)]; }); },
     finishDay(){ this.prof.log[this.todayIso]=this.cur; this.view="cal"; this.selDate=this.todayIso; },
     // profiles
+    pickProfile(name){ this.active=name; this.picking=false; this.cur="A"; this.editDay="A"; this.openSwap=null; this.view="train"; },
     switchProfile(name){ this.active=name; this.cur="A"; this.editDay="A"; this.openSwap=null; },
     addProfile(){
       const n=this.newProfile.trim();
       if(!n || this.profiles[n]) return;
       this.profiles[n]={ routine:defaultRoutine(), sets:{}, swaps:{}, log:{} };
-      this.active=n; this.newProfile=""; this.cur="A"; this.editDay="A";
+      this.active=n; this.newProfile=""; this.cur="A"; this.editDay="A"; this.picking=false;
     },
     deleteProfile(name){
       if(this.profileNames.length<=1) return;

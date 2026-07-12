@@ -54,7 +54,7 @@
 
 App Vue 3 en un solo `index.html` (sin build). Pensada para el móvil en el gym.
 
-- **Perfiles:** varias personas, cada una con su rutina, pesos y calendario propios. El perfil activo se guarda y se mantiene entre sesiones (no hay que elegirlo cada vez). Se gestionan en **⚙️ Ajustes** (añadir / cambiar / borrar). Perfil por defecto: **Paco**.
+- **Perfiles:** al entrar por primera vez, pantalla **¿Quién entrena?** para elegir/crear perfil. La elección se guarda en el navegador y se mantiene entre sesiones (no vuelve a preguntar). Cada persona tiene su rutina, pesos y calendario. Gestión en **⚙️ Ajustes** (añadir / cambiar / borrar, o *🔀 Cambiar de perfil*). Perfil por defecto: **Paco**.
 - **Editar rutina:** en Ajustes, por día A/B/C, editas cada ejercicio: nombre (texto), series, reps y peso. Añade, elimina o restaura el día.
 - **Entreno:** pestañas Día A/B/C, marca cada serie, apunta el peso, barra de progreso.
 - **Cambiar ejercicio:** los ejercicios de la rutina original traen 2 backups; si la máquina está ocupada, tocas y usas la alternativa.
