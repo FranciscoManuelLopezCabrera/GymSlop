@@ -204,6 +204,15 @@
   .grp-i .tick{color:var(--acc); font-weight:800}
   .grp-i.on .tick{color:#06210f}
   .grp-empty{padding:24px 16px; text-align:center; color:var(--mut); font-size:14px}
+  /* install */
+  .install-box{margin-top:12px}
+  .installed{text-align:center; color:var(--acc); font-size:13px; font-weight:600; padding:10px}
+  .help-body{padding:2px 18px 22px; color:var(--mut); font-size:14.5px; line-height:1.6}
+  .help-body b{color:var(--txt)}
+  .help-body ol{margin:8px 0 14px; padding-left:20px}
+  .help-body li{margin-bottom:7px}
+  .help-body .kbd{display:inline-flex; align-items:center; justify-content:center; min-width:22px; height:22px; padding:0 5px; border-radius:6px; background:var(--card2); border:1px solid var(--line); color:var(--txt); font-size:13px; font-weight:700; vertical-align:-4px}
+  .help-note{font-size:12.5px; color:var(--mut); border-top:1px solid var(--line); padding-top:12px; margin-top:4px}
   /* profile chooser */
   .chooser{
     position:fixed; inset:0; z-index:100; background:var(--bg); overflow-y:auto;
@@ -277,6 +286,11 @@
           <button class="btn" @click="cancelCreate">Cancelar</button>
           <button class="btn primary" @click="addProfile">Crear perfil</button>
         </div>
+      </div>
+
+      <div class="install-box">
+        <button v-if="!isStandalone" class="btn primary" style="width:100%" @click="installApp">📲 Añadir a pantalla de inicio</button>
+        <div v-else class="installed">✓ App instalada en tu dispositivo</div>
       </div>
     </div>
   </div>
@@ -433,6 +447,11 @@
           <button class="btn primary" @click="addProfile">Crear perfil</button>
         </div>
       </div>
+
+      <div class="install-box">
+        <button v-if="!isStandalone" class="btn primary" style="width:100%" @click="installApp">📲 Añadir a pantalla de inicio</button>
+        <div v-else class="installed">✓ App instalada en tu dispositivo</div>
+      </div>
     </div>
 
     <h3 class="sec">Editar rutina — {{ typeLabel(prof.type) }}</h3>
@@ -493,6 +512,36 @@
           </button>
         </template>
         <div v-if="!pickerGroups.length" class="grp-empty">Sin resultados. Toca <b>✏️ Texto</b> para un nombre propio.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- INSTALL HELP (iOS / fallback) -->
+  <div v-if="installHelp" class="sheet-bg" @click.self="installHelp=false">
+    <div class="sheet">
+      <div class="sheet-head">
+        <b>Añadir a pantalla de inicio</b>
+        <button @click="installHelp=false">✕</button>
+      </div>
+      <div class="help-body">
+        <template v-if="isIOS">
+          <p><b>iPhone / iPad — Safari</b></p>
+          <ol>
+            <li>Abre GymSlop en <b>Safari</b> (no funciona desde otras apps).</li>
+            <li>Toca el botón <b>Compartir</b> <span class="kbd">⤴</span> abajo.</li>
+            <li>Elige <b>Añadir a pantalla de inicio</b>.</li>
+            <li>Toca <b>Añadir</b>. Listo — ya la tienes como app.</li>
+          </ol>
+        </template>
+        <template v-else>
+          <p><b>Android — Chrome</b></p>
+          <ol>
+            <li>Abre el menú <span class="kbd">⋮</span> (arriba a la derecha).</li>
+            <li>Toca <b>Instalar app</b> o <b>Añadir a pantalla de inicio</b>.</li>
+            <li>Confirma <b>Instalar</b>.</li>
+          </ol>
+        </template>
+        <p class="help-note">En otro navegador, busca <b>“Añadir a pantalla de inicio”</b> o <b>“Instalar”</b> en su menú.</p>
       </div>
     </div>
   </div>
@@ -727,12 +776,17 @@ function loadState(){
 }
 
 const { createApp } = Vue;
+let installEvent = null;  // kept outside Vue data so the native event isn't wrapped in a proxy
 
 createApp({
   data(){
     const st = loadState();
     const now = new Date();
+    const ua = navigator.userAgent || "";
     return {
+      isIOS: /iphone|ipad|ipod/i.test(ua) || (navigator.platform==="MacIntel" && navigator.maxTouchPoints>1),
+      isStandalone: window.matchMedia("(display-mode: standalone)").matches || navigator.standalone===true,
+      canInstall: false, installHelp: false,
       view: "train",
       cur: "", editDay: "",
       active: st.active,
@@ -747,7 +801,11 @@ createApp({
       timerOpen: false, tBase: 90, tLeft: 90, tRunning: false, tHandle: null,
     };
   },
-  mounted(){ this.syncDays(); },
+  mounted(){
+    this.syncDays();
+    window.addEventListener("beforeinstallprompt", (e)=>{ e.preventDefault(); installEvent=e; this.canInstall=true; });
+    window.addEventListener("appinstalled", ()=>{ installEvent=null; this.canInstall=false; this.isStandalone=true; this.installHelp=false; });
+  },
   computed: {
     prof(){ return this.profiles[this.active] || this.profiles[Object.keys(this.profiles)[0]]; },
     days(){ return this.prof.days; },
@@ -807,6 +865,18 @@ createApp({
   },
   methods: {
     persist(){ localStorage.setItem(KEY, JSON.stringify({ active:this.active, profiles:this.profiles })); },
+    installApp(){
+      if(this.isStandalone) return;
+      if(installEvent){
+        installEvent.prompt();
+        installEvent.userChoice.then((r)=>{
+          installEvent=null; this.canInstall=false;
+          if(!r || r.outcome!=="accepted") this.installHelp=true;   // dismissed -> show manual steps
+        });
+        return;
+      }
+      this.installHelp=true;   // iOS Safari / no native prompt available
+    },
     typeLabel(t){ const o=TYPE_OPTS.find(x=>x.k===t); return o?o.t:"Rutina"; },
     skey(i){ return this.cur+"."+i; },
     syncDays(){
