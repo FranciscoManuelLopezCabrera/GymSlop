@@ -12,25 +12,28 @@
 <title>GymSlop — Rutina Full Body</title>
 <style>
   :root{
-    --bg:#0f1115; --card:#191d26; --card2:#212734; --line:#2a3140;
-    --txt:#e8ecf3; --mut:#8a93a6; --acc:#4ade80; --acc2:#22c55e;
-    --warn:#fbbf24; --blue:#38bdf8; --red:#f87171; --rad:14px;
+    --bg:#0a0c11; --card:#151922; --card2:#1e232f; --line:#2b313e;
+    --txt:#f0f3f8; --mut:#8b94a6; --acc:#ff6a2b; --acc2:#ff8a4f; --ink:#241206;
+    --warn:#fbbf24; --blue:#4aa8ff; --red:#f87171; --green:#4ade80; --rad:16px;
   }
   *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
   html,body{margin:0}
   body{
-    background:var(--bg); color:var(--txt);
+    background:#0a0c11;
+    background-image:radial-gradient(135% 70% at 50% -12%, rgba(255,106,43,.10), transparent 55%);
+    background-attachment:fixed;
+    color:var(--txt);
     font:16px/1.45 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
     padding:0 0 120px; -webkit-text-size-adjust:100%;
   }
   [v-cloak]{display:none}
   header{
-    position:sticky; top:0; z-index:20; background:rgba(15,17,21,.92);
-    backdrop-filter:blur(10px); border-bottom:1px solid var(--line);
+    position:sticky; top:0; z-index:20; background:rgba(10,12,17,.82);
+    backdrop-filter:blur(14px) saturate(1.4); border-bottom:1px solid var(--line);
     padding:calc(14px + env(safe-area-inset-top)) 16px 12px;
   }
   .brand{display:flex; align-items:center; justify-content:space-between; gap:10px}
-  .brand h1{font-size:19px; margin:0; letter-spacing:.3px}
+  .brand h1{font-size:21px; margin:0; letter-spacing:-.4px; font-weight:800; text-transform:uppercase}
   .brand h1 span{color:var(--acc)}
   .pchip{
     display:flex; align-items:center; gap:6px; background:var(--card2); border:1px solid var(--line);
@@ -41,7 +44,7 @@
     flex:1; padding:9px 0; text-align:center; border:none; background:transparent;
     color:var(--mut); border-radius:9px; font-weight:600; font-size:13.5px; cursor:pointer; transition:.15s;
   }
-  .vswitch button.on{background:var(--acc); color:#06210f}
+  .vswitch button.on{background:var(--card2); color:var(--txt); box-shadow:0 1px 3px rgba(0,0,0,.35), inset 0 0 0 1px var(--line)}
   .tabs{display:flex; gap:8px; margin-top:12px; overflow-x:auto; scrollbar-width:none}
   .tabs::-webkit-scrollbar{display:none}
   .tab{
@@ -50,17 +53,17 @@
     font-size:15px; cursor:pointer; transition:.15s;
   }
   .tab .lbl{display:block; font-size:10px; font-weight:500; color:var(--mut); margin-top:2px; white-space:nowrap}
-  .tab.on{background:var(--acc); color:#06210f; border-color:var(--acc)}
-  .tab.on .lbl{color:#0a3b1c}
+  .tab.on{background:var(--card2); color:var(--txt); border-color:var(--acc); box-shadow:0 4px 16px rgba(255,106,43,.16)}
+  .tab.on .lbl{color:var(--acc)}
   .prog{margin-top:12px}
-  .bar{height:7px; background:var(--card2); border-radius:99px; overflow:hidden}
-  .bar>i{display:block; height:100%; width:0; background:linear-gradient(90deg,var(--acc2),var(--acc)); transition:width .3s}
+  .bar{height:8px; background:var(--card2); border-radius:99px; overflow:hidden; box-shadow:inset 0 0 0 1px var(--line)}
+  .bar>i{display:block; height:100%; width:0; background:linear-gradient(90deg,var(--acc2),var(--acc)); box-shadow:0 0 12px rgba(255,106,43,.5); transition:width .3s}
   .prog p{margin:6px 2px 0; font-size:12px; color:var(--mut); display:flex; justify-content:space-between}
   main{padding:16px 14px 0; max-width:640px; margin:0 auto}
   h3.sec{margin:22px 2px 10px; font-size:13px; color:var(--acc); text-transform:uppercase; letter-spacing:.6px}
   h3.sec:first-child{margin-top:4px}
-  .ex{background:var(--card); border:1px solid var(--line); border-radius:var(--rad); margin-bottom:12px; overflow:hidden}
-  .ex.done{border-color:var(--acc2)}
+  .ex{background:linear-gradient(180deg,rgba(255,255,255,.02),transparent 40%),var(--card); border:1px solid var(--line); border-radius:var(--rad); margin-bottom:12px; overflow:hidden; box-shadow:0 2px 8px rgba(0,0,0,.28)}
+  .ex.done{border-color:var(--acc); box-shadow:0 2px 14px rgba(255,106,43,.14)}
   .ex-h{display:flex; align-items:center; gap:12px; padding:14px 14px 10px}
   .ex-n{flex:1; min-width:0}
   .ex-n b{display:block; font-size:15.5px; line-height:1.3}
@@ -75,7 +78,7 @@
     background:var(--card2); color:var(--mut); font-weight:700; font-size:15px;
     display:flex; align-items:center; justify-content:center; cursor:pointer; transition:.12s;
   }
-  .set.on{background:var(--acc); color:#06210f; border-color:var(--acc); transform:scale(1.04)}
+  .set.on{background:linear-gradient(140deg,var(--acc2),var(--acc)); color:var(--ink); border-color:transparent; transform:scale(1.06); box-shadow:0 4px 14px rgba(255,106,43,.32)}
   .wt{display:flex; align-items:center; gap:6px; margin-left:auto}
   .wt input{
     width:70px; padding:9px 8px; border-radius:10px; border:1px solid var(--line);
@@ -93,9 +96,9 @@
     width:100%; text-align:left; padding:11px 12px; background:transparent; border:none;
     color:var(--txt); font-size:14px; border-radius:9px; cursor:pointer;
   }
-  .swap-opt.active{background:var(--acc); color:#06210f; font-weight:700}
+  .swap-opt.active{background:var(--acc); color:var(--ink); font-weight:700}
   .swap-opt small{color:var(--mut); font-size:11px; font-weight:600}
-  .swap-opt.active small{color:#0a3b1c}
+  .swap-opt.active small{color:var(--ink)}
   .swap-tag{font-size:10px; color:var(--mut); text-transform:uppercase; letter-spacing:.5px}
   .empty-state{background:var(--card); border:1px solid var(--line); border-radius:var(--rad); padding:28px 20px; text-align:center; color:var(--mut); margin-bottom:14px}
   .empty-state .ico{font-size:36px; display:block; margin-bottom:10px}
@@ -111,7 +114,7 @@
     background:var(--card); color:var(--mut); font-weight:600; font-size:13.5px; cursor:pointer;
   }
   .btn:active{transform:scale(.98)}
-  .btn.primary{background:var(--acc); color:#06210f; border-color:var(--acc)}
+  .btn.primary{background:linear-gradient(135deg,var(--acc2),var(--acc)); color:var(--ink); border-color:transparent; box-shadow:0 6px 18px rgba(255,106,43,.28)}
   .btn.danger{color:var(--red); border-color:var(--red)}
   /* calendar */
   .cal-head{display:flex; align-items:center; justify-content:space-between; margin-bottom:14px}
@@ -148,8 +151,8 @@
     flex:1; display:flex; align-items:center; gap:10px; padding:12px 14px; border-radius:11px;
     border:1px solid var(--line); background:var(--card2); color:var(--txt); font-weight:600; font-size:15px; cursor:pointer; text-align:left;
   }
-  .prof-pick.on{border-color:var(--acc); background:rgba(74,222,128,.12)}
-  .prof-pick .av{width:32px; height:32px; border-radius:99px; background:var(--acc); color:#06210f; font-weight:800; display:flex; align-items:center; justify-content:center; font-size:14px; flex:0 0 auto}
+  .prof-pick.on{border-color:var(--acc); background:rgba(255,106,43,.14)}
+  .prof-pick .av{width:32px; height:32px; border-radius:99px; background:var(--acc); color:var(--ink); font-weight:800; display:flex; align-items:center; justify-content:center; font-size:14px; flex:0 0 auto}
   .prof-pick .meta{min-width:0}
   .prof-pick .meta b{display:block; font-size:15px}
   .prof-pick .meta small{color:var(--mut); font-size:11px; font-weight:500}
@@ -157,12 +160,12 @@
   .icon-btn{width:44px; height:44px; border-radius:11px; border:1px solid var(--line); background:var(--card2); color:var(--red); font-size:16px; cursor:pointer; flex:0 0 auto}
   .addrow{display:flex; gap:8px}
   .addrow input{flex:1; padding:11px 12px; border-radius:11px; border:1px solid var(--line); background:var(--card2); color:var(--txt); font-size:15px}
-  .addrow button{padding:0 16px; border-radius:11px; border:none; background:var(--acc); color:#06210f; font-weight:700; font-size:14px; cursor:pointer}
+  .addrow button{padding:0 16px; border-radius:11px; border:none; background:var(--acc); color:var(--ink); font-weight:700; font-size:14px; cursor:pointer}
   /* create form */
   .create > input{width:100%; padding:12px; border-radius:11px; border:1px solid var(--line); background:var(--card2); color:var(--txt); font-size:15px; margin-bottom:10px}
   .type-grid{display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-bottom:12px}
   .type-opt{text-align:left; padding:12px; border-radius:12px; border:1px solid var(--line); background:var(--card2); color:var(--txt); cursor:pointer}
-  .type-opt.on{border-color:var(--acc); background:rgba(74,222,128,.12)}
+  .type-opt.on{border-color:var(--acc); background:rgba(255,106,43,.14)}
   .type-opt b{display:block; font-size:13.5px; margin-bottom:3px}
   .type-opt small{color:var(--mut); font-size:10.5px; line-height:1.3; display:block}
   /* routine editor */
@@ -192,7 +195,7 @@
   .sheet-search{display:flex; gap:8px; padding:0 16px 12px}
   .sheet-search input{flex:1; padding:12px; border-radius:11px; border:1px solid var(--line); background:var(--card2); color:var(--txt); font-size:15px}
   .sheet-search .mode{padding:0 14px; border-radius:11px; border:1px solid var(--line); background:var(--card2); color:var(--mut); font-weight:600; font-size:13px; cursor:pointer; white-space:nowrap}
-  .sheet-search .mode.on{background:var(--acc); color:#06210f; border-color:var(--acc)}
+  .sheet-search .mode.on{background:var(--acc); color:var(--ink); border-color:var(--acc)}
   .sheet-text{display:flex; gap:8px; padding:0 16px 14px}
   .sheet-text input{flex:1; padding:12px; border-radius:11px; border:1px solid var(--acc); background:var(--card2); color:var(--txt); font-size:15px}
   .sheet-text .btn{flex:0 0 auto; min-width:0; padding:12px 18px}
@@ -200,9 +203,9 @@
   .grp-h{position:sticky; top:0; background:var(--card); color:var(--acc); font-size:11px; text-transform:uppercase; letter-spacing:.6px; font-weight:700; padding:10px 8px 6px}
   .grp-i{display:flex; align-items:center; justify-content:space-between; gap:8px; width:100%; text-align:left; padding:12px; border:none; background:transparent; color:var(--txt); font-size:15px; border-radius:9px; cursor:pointer}
   .grp-i:active{background:var(--card2)}
-  .grp-i.on{background:var(--acc); color:#06210f; font-weight:700}
+  .grp-i.on{background:var(--acc); color:var(--ink); font-weight:700}
   .grp-i .tick{color:var(--acc); font-weight:800}
-  .grp-i.on .tick{color:#06210f}
+  .grp-i.on .tick{color:var(--ink)}
   .grp-empty{padding:24px 16px; text-align:center; color:var(--mut); font-size:14px}
   /* install */
   .install-box{margin-top:12px}
@@ -230,7 +233,7 @@
     border:1px solid var(--line); background:var(--card); color:var(--txt); font-size:16px; font-weight:700; cursor:pointer;
   }
   .ch-prof:active{transform:scale(.99)}
-  .ch-prof .av{width:34px; height:34px; border-radius:99px; background:var(--acc); color:#06210f; font-weight:800; display:flex; align-items:center; justify-content:center; font-size:15px}
+  .ch-prof .av{width:34px; height:34px; border-radius:99px; background:var(--acc); color:var(--ink); font-weight:800; display:flex; align-items:center; justify-content:center; font-size:15px}
   .ch-prof .meta{min-width:0; text-align:left}
   .ch-prof .meta small{display:block; color:var(--mut); font-size:11px; font-weight:500}
   .ch-prof .arw{margin-left:auto; color:var(--mut); font-size:18px}
@@ -244,11 +247,11 @@
   #timer b{font-variant-numeric:tabular-nums; font-size:19px; min-width:52px; text-align:center}
   #timer .tlbl{font-size:11px; color:var(--mut); margin-right:2px}
   .tbtn{width:40px; height:40px; border-radius:99px; border:none; background:var(--card); color:var(--txt); font-size:18px; cursor:pointer; display:flex; align-items:center; justify-content:center}
-  .tbtn.go{background:var(--acc); color:#06210f}
+  .tbtn.go{background:var(--acc); color:var(--ink)}
   #tfab{
     position:fixed; right:16px; bottom:calc(16px + env(safe-area-inset-bottom)); z-index:29;
-    width:56px; height:56px; border-radius:99px; border:none; background:var(--acc); color:#06210f;
-    font-size:13px; font-weight:800; cursor:pointer; box-shadow:0 8px 30px rgba(0,0,0,.45);
+    width:56px; height:56px; border-radius:99px; border:none; background:linear-gradient(140deg,var(--acc2),var(--acc)); color:var(--ink);
+    font-size:13px; font-weight:800; cursor:pointer; box-shadow:0 8px 26px rgba(255,106,43,.4);
     display:flex; flex-direction:column; align-items:center; justify-content:center; line-height:1;
   }
   #tfab small{font-size:9px; font-weight:600; margin-top:2px}
@@ -289,7 +292,7 @@
       </div>
 
       <div class="install-box">
-        <button v-if="!isStandalone" class="btn primary" style="width:100%" @click="installApp">📲 Añadir a pantalla de inicio</button>
+        <button v-if="!isStandalone" class="btn" style="width:100%" @click="installApp">📲 Añadir a pantalla de inicio</button>
         <div v-else class="installed">✓ App instalada en tu dispositivo</div>
       </div>
     </div>
@@ -449,7 +452,7 @@
       </div>
 
       <div class="install-box">
-        <button v-if="!isStandalone" class="btn primary" style="width:100%" @click="installApp">📲 Añadir a pantalla de inicio</button>
+        <button v-if="!isStandalone" class="btn" style="width:100%" @click="installApp">📲 Añadir a pantalla de inicio</button>
         <div v-else class="installed">✓ App instalada en tu dispositivo</div>
       </div>
     </div>
@@ -641,7 +644,7 @@ const TYPE_OPTS = [
   { k:"clases", t:"Clases",          d:"solo calendario de clases" },
   { k:"custom", t:"Personalizado",   d:"crea tu propia rutina" },
 ];
-const PALETTE = ["#4ade80","#38bdf8","#fbbf24","#c084fc","#f472b6","#2dd4bf","#fb923c"];
+const PALETTE = ["#ff6a2b","#4aa8ff","#fbbf24","#c084fc","#2dd4bf","#f472b6","#4ade80"];
 
 // ---- exercise catalog (picklist) ----
 const GROUP_ORDER = ["Cuádriceps","Femoral","Glúteo","Gemelo","Pecho","Espalda","Hombro","Bíceps","Tríceps","Core","Cardio"];
