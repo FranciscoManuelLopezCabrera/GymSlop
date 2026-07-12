@@ -1,0 +1,496 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=1">
+<meta name="theme-color" content="#0f1115">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="GymSlop">
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%F0%9F%8F%8B%EF%B8%8F%3C/text%3E%3C/svg%3E">
+<title>GymSlop — Rutina Full Body</title>
+<style>
+  :root{
+    --bg:#0f1115; --card:#191d26; --card2:#212734; --line:#2a3140;
+    --txt:#e8ecf3; --mut:#8a93a6; --acc:#4ade80; --acc2:#22c55e;
+    --warn:#fbbf24; --blue:#38bdf8; --rad:14px;
+  }
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  html,body{margin:0}
+  body{
+    background:var(--bg); color:var(--txt);
+    font:16px/1.45 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
+    padding:0 0 120px; -webkit-text-size-adjust:100%;
+  }
+  [v-cloak]{display:none}
+  header{
+    position:sticky; top:0; z-index:20; background:rgba(15,17,21,.92);
+    backdrop-filter:blur(10px); border-bottom:1px solid var(--line);
+    padding:calc(14px + env(safe-area-inset-top)) 16px 12px;
+  }
+  .brand{display:flex; align-items:center; justify-content:space-between; gap:10px}
+  .brand h1{font-size:19px; margin:0; letter-spacing:.3px}
+  .brand h1 span{color:var(--acc)}
+  .brand small{color:var(--mut); font-weight:400; font-size:12px}
+  /* view switch */
+  .vswitch{display:flex; gap:8px; margin-top:12px; background:var(--card); border:1px solid var(--line); border-radius:12px; padding:4px}
+  .vswitch button{
+    flex:1; padding:9px 0; text-align:center; border:none; background:transparent;
+    color:var(--mut); border-radius:9px; font-weight:600; font-size:14px; cursor:pointer; transition:.15s;
+  }
+  .vswitch button.on{background:var(--acc); color:#06210f}
+  /* day tabs */
+  .tabs{display:flex; gap:8px; margin-top:12px}
+  .tab{
+    flex:1; padding:10px 0; text-align:center; border:1px solid var(--line);
+    background:var(--card); color:var(--mut); border-radius:12px; font-weight:600;
+    font-size:15px; cursor:pointer; transition:.15s;
+  }
+  .tab .lbl{display:block; font-size:10.5px; font-weight:500; color:var(--mut); margin-top:2px}
+  .tab.on{background:var(--acc); color:#06210f; border-color:var(--acc)}
+  .tab.on .lbl{color:#0a3b1c}
+  .prog{margin-top:12px}
+  .bar{height:7px; background:var(--card2); border-radius:99px; overflow:hidden}
+  .bar>i{display:block; height:100%; width:0; background:linear-gradient(90deg,var(--acc2),var(--acc)); transition:width .3s}
+  .prog p{margin:6px 2px 0; font-size:12px; color:var(--mut); display:flex; justify-content:space-between}
+  main{padding:16px 14px 0; max-width:640px; margin:0 auto}
+  /* exercise card */
+  .ex{background:var(--card); border:1px solid var(--line); border-radius:var(--rad); margin-bottom:12px; overflow:hidden}
+  .ex.done{border-color:var(--acc2)}
+  .ex-h{display:flex; align-items:center; gap:12px; padding:14px 14px 10px}
+  .ex-n{flex:1; min-width:0}
+  .ex-n b{display:block; font-size:15.5px; line-height:1.3}
+  .ex-n em{font-style:normal; color:var(--mut); font-size:13px}
+  .ex-n em.swapped{color:var(--warn)}
+  .badge{background:var(--card2); color:var(--blue); font-size:12px; font-weight:600; padding:4px 9px; border-radius:8px; white-space:nowrap}
+  .ex.cardio .badge{color:var(--warn)}
+  .ex-b{padding:0 14px 12px; display:flex; flex-wrap:wrap; align-items:center; gap:10px}
+  .sets{display:flex; gap:8px; flex-wrap:wrap}
+  .set{
+    width:42px; height:42px; border-radius:11px; border:1px solid var(--line);
+    background:var(--card2); color:var(--mut); font-weight:700; font-size:15px;
+    display:flex; align-items:center; justify-content:center; cursor:pointer; transition:.12s;
+  }
+  .set.on{background:var(--acc); color:#06210f; border-color:var(--acc); transform:scale(1.04)}
+  .wt{display:flex; align-items:center; gap:6px; margin-left:auto}
+  .wt input{
+    width:66px; padding:9px 8px; border-radius:10px; border:1px solid var(--line);
+    background:var(--card2); color:var(--txt); font-size:15px; text-align:center; font-weight:600;
+  }
+  .wt span{color:var(--mut); font-size:12px}
+  /* backups */
+  .swap-btn{
+    display:block; width:100%; text-align:left; padding:9px 14px; background:var(--card2);
+    border:none; border-top:1px solid var(--line); color:var(--mut); font-size:12.5px;
+    font-weight:600; cursor:pointer;
+  }
+  .swap-btn:active{background:var(--line)}
+  .swap-list{border-top:1px solid var(--line); background:rgba(0,0,0,.15); padding:4px}
+  .swap-opt{
+    display:flex; align-items:center; justify-content:space-between; gap:8px;
+    width:100%; text-align:left; padding:11px 12px; background:transparent; border:none;
+    color:var(--txt); font-size:14px; border-radius:9px; cursor:pointer;
+  }
+  .swap-opt.active{background:var(--acc); color:#06210f; font-weight:700}
+  .swap-opt small{color:var(--mut); font-size:11px; font-weight:600}
+  .swap-opt.active small{color:#0a3b1c}
+  .swap-tag{font-size:10px; color:var(--mut); text-transform:uppercase; letter-spacing:.5px}
+  /* notes */
+  .notes{background:var(--card); border:1px solid var(--line); border-radius:var(--rad); padding:14px 16px; margin:6px 0 20px}
+  .notes h3{margin:0 0 10px; font-size:14px; color:var(--acc)}
+  .notes ul{margin:0; padding-left:18px; color:var(--mut); font-size:13.5px}
+  .notes li{margin-bottom:7px}
+  .notes b{color:var(--txt)}
+  .rowbtns{display:flex; gap:10px; margin:4px 0 8px}
+  .btn{
+    flex:1; padding:11px; border-radius:11px; border:1px solid var(--line);
+    background:var(--card); color:var(--mut); font-weight:600; font-size:13.5px; cursor:pointer;
+  }
+  .btn:active{transform:scale(.98)}
+  .btn.primary{background:var(--acc); color:#06210f; border-color:var(--acc)}
+  /* calendar */
+  .cal-head{display:flex; align-items:center; justify-content:space-between; margin-bottom:14px}
+  .cal-head b{font-size:17px; text-transform:capitalize}
+  .cal-nav{width:40px; height:40px; border-radius:11px; border:1px solid var(--line); background:var(--card); color:var(--txt); font-size:18px; cursor:pointer}
+  .cal-grid{display:grid; grid-template-columns:repeat(7,1fr); gap:6px}
+  .cal-dow{text-align:center; font-size:11px; color:var(--mut); font-weight:600; padding-bottom:2px}
+  .cal-cell{
+    aspect-ratio:1; border:1px solid var(--line); border-radius:11px; background:var(--card);
+    display:flex; flex-direction:column; align-items:center; justify-content:center; gap:3px;
+    cursor:pointer; position:relative; font-size:14px; color:var(--txt);
+  }
+  .cal-cell.empty{background:transparent; border:none; cursor:default}
+  .cal-cell.today{border-color:var(--acc)}
+  .cal-cell.sel{outline:2px solid var(--blue); outline-offset:-2px}
+  .cal-cell.rest{background:var(--card2)}
+  .cal-cell .lg{
+    width:20px; height:20px; border-radius:7px; display:flex; align-items:center; justify-content:center;
+    font-size:11px; font-weight:800; color:#06210f;
+  }
+  .lg.A{background:var(--acc)} .lg.B{background:var(--blue); color:#052436} .lg.C{background:var(--warn); color:#3b2a04}
+  .cal-cell .rz{font-size:12px; color:var(--mut)}
+  .cal-picker{margin-top:14px; background:var(--card); border:1px solid var(--line); border-radius:var(--rad); padding:14px}
+  .cal-picker h4{margin:0 0 10px; font-size:14px}
+  .cal-picker h4 span{color:var(--mut); font-weight:400}
+  .pick-row{display:flex; gap:8px; flex-wrap:wrap}
+  .pick{flex:1; min-width:64px; padding:12px 6px; border-radius:11px; border:1px solid var(--line); background:var(--card2); color:var(--txt); font-weight:700; font-size:14px; cursor:pointer}
+  .pick.A.on{background:var(--acc); color:#06210f; border-color:var(--acc)}
+  .pick.B.on{background:var(--blue); color:#052436; border-color:var(--blue)}
+  .pick.C.on{background:var(--warn); color:#3b2a04; border-color:var(--warn)}
+  .pick.rest.on{background:var(--card); border-color:var(--mut)}
+  .pick.clear{flex:0 0 auto; color:var(--mut)}
+  .cal-stats{display:flex; gap:10px; margin-bottom:14px}
+  .stat{flex:1; background:var(--card); border:1px solid var(--line); border-radius:12px; padding:12px; text-align:center}
+  .stat b{display:block; font-size:24px; color:var(--acc)}
+  .stat small{color:var(--mut); font-size:11px}
+  /* rest timer */
+  #timer{
+    position:fixed; left:50%; transform:translateX(-50%); bottom:calc(16px + env(safe-area-inset-bottom));
+    z-index:30; display:flex; align-items:center; gap:12px; background:var(--card2);
+    border:1px solid var(--line); border-radius:99px; padding:8px 8px 8px 18px; box-shadow:0 8px 30px rgba(0,0,0,.5);
+  }
+  #timer b{font-variant-numeric:tabular-nums; font-size:19px; min-width:52px; text-align:center}
+  #timer .tlbl{font-size:11px; color:var(--mut); margin-right:2px}
+  .tbtn{width:40px; height:40px; border-radius:99px; border:none; background:var(--card); color:var(--txt); font-size:18px; cursor:pointer; display:flex; align-items:center; justify-content:center}
+  .tbtn.go{background:var(--acc); color:#06210f}
+  #tfab{
+    position:fixed; right:16px; bottom:calc(16px + env(safe-area-inset-bottom)); z-index:29;
+    width:56px; height:56px; border-radius:99px; border:none; background:var(--acc); color:#06210f;
+    font-size:13px; font-weight:800; cursor:pointer; box-shadow:0 8px 30px rgba(0,0,0,.45);
+    display:flex; flex-direction:column; align-items:center; justify-content:center; line-height:1;
+  }
+  #tfab small{font-size:9px; font-weight:600; margin-top:2px}
+</style>
+</head>
+<body>
+<div id="app" v-cloak>
+  <header>
+    <div class="brand">
+      <h1>Gym<span>Slop</span> <small>Full Body · 3 días</small></h1>
+      <small>{{ todayLabel }}</small>
+    </div>
+    <div class="vswitch">
+      <button :class="{on:view==='train'}" @click="view='train'">🏋️ Entreno</button>
+      <button :class="{on:view==='cal'}" @click="view='cal'">📅 Calendario</button>
+    </div>
+    <template v-if="view==='train'">
+      <div class="tabs">
+        <button v-for="d in ['A','B','C']" :key="d" class="tab" :class="{on:d===cur}" @click="cur=d">
+          Día {{ d }}<span class="lbl">{{ dayLbl[d] }}</span>
+        </button>
+      </div>
+      <div class="prog">
+        <div class="bar"><i :style="{width: pct+'%'}"></i></div>
+        <p><span>{{ doneSets }} de {{ totalSets }} series</span><span>{{ pct }}%</span></p>
+      </div>
+    </template>
+  </header>
+
+  <!-- ENTRENO -->
+  <main v-if="view==='train'">
+    <div v-for="(ex,i) in rutina[cur]" :key="cur+i" class="ex" :class="{done:isDone(i), cardio:ex.cardio}">
+      <div class="ex-h">
+        <div class="ex-n">
+          <b>{{ exName(i) }}</b>
+          <em :class="{swapped:swaps[skey(i)]!=null}">{{ swaps[skey(i)]!=null ? 'sustituto' : (ex.cardio?'cardio':'máquina') }}</em>
+        </div>
+        <div class="badge">{{ ex.cardio ? ex.r : ex.s+'×'+ex.r }}</div>
+      </div>
+      <div class="ex-b">
+        <div class="sets">
+          <button v-for="j in ex.s" :key="j" class="set" :class="{on:setOn(i,j-1)}" @click="toggleSet(i,j-1)">
+            {{ ex.cardio ? '✓' : j }}
+          </button>
+        </div>
+        <div v-if="!ex.cardio" class="wt">
+          <input type="tel" inputmode="decimal" placeholder="—"
+                 :value="weights[skey(i)]||''" @input="setWeight(i,$event.target.value)">
+          <span>kg</span>
+        </div>
+      </div>
+      <template v-if="ex.backups && ex.backups.length">
+        <button class="swap-btn" @click="toggleSwap(i)">
+          🔄 {{ openSwap===i ? 'Ocultar alternativas' : 'Cambiar ejercicio' }}
+        </button>
+        <div v-if="openSwap===i" class="swap-list">
+          <button class="swap-opt" :class="{active: swaps[skey(i)]==null}" @click="chooseEx(i,null)">
+            <span>{{ ex.n }}</span><small>Principal</small>
+          </button>
+          <button v-for="(b,bi) in ex.backups" :key="bi" class="swap-opt"
+                  :class="{active: swaps[skey(i)]===bi}" @click="chooseEx(i,bi)">
+            <span>{{ b }}</span><small class="swap-tag">Backup {{ bi+1 }}</small>
+          </button>
+        </div>
+      </template>
+    </div>
+
+    <div class="rowbtns">
+      <button class="btn" @click="resetDay">↺ Reiniciar día</button>
+      <button class="btn primary" @click="finishDay">✓ Guardar en calendario</button>
+    </div>
+
+    <div class="notes">
+      <h3>Notas</h3>
+      <ul>
+        <li>La <b>polea (cable)</b> cuenta como máquina — guiada y fácil de controlar, sin técnica de peso libre.</li>
+        <li>¿No hay máquina libre? Toca <b>Cambiar ejercicio</b> y usa un backup equivalente.</li>
+        <li><b>Progresión:</b> cuando completes las series en el rango alto de reps con buena forma, sube peso.</li>
+        <li><b>Distribución:</b> lunes · miércoles · viernes (o día sí día no), mínimo 48h entre sesiones.</li>
+      </ul>
+    </div>
+  </main>
+
+  <!-- CALENDARIO -->
+  <main v-if="view==='cal'">
+    <div class="cal-stats">
+      <div class="stat"><b>{{ monthCount }}</b><small>entrenos este mes</small></div>
+      <div class="stat"><b>{{ streak }}</b><small>racha (días)</small></div>
+      <div class="stat"><b>{{ totalCount }}</b><small>total registrados</small></div>
+    </div>
+
+    <div class="cal-head">
+      <button class="cal-nav" @click="shiftMonth(-1)">‹</button>
+      <b>{{ monthName }} {{ calYear }}</b>
+      <button class="cal-nav" @click="shiftMonth(1)">›</button>
+    </div>
+
+    <div class="cal-grid">
+      <div v-for="d in ['L','M','X','J','V','S','D']" :key="'h'+d" class="cal-dow">{{ d }}</div>
+      <div v-for="(cell,idx) in calCells" :key="'c'+idx"
+           class="cal-cell"
+           :class="{empty:!cell, today:cell&&cell.iso===todayIso, sel:cell&&cell.iso===selDate, rest:cell&&log[cell.iso]==='rest'}"
+           @click="cell && selectDay(cell.iso)">
+        <template v-if="cell">
+          <span v-if="log[cell.iso] && log[cell.iso]!=='rest'" class="lg" :class="log[cell.iso]">{{ log[cell.iso] }}</span>
+          <span v-else-if="log[cell.iso]==='rest'" class="rz">💤</span>
+          <span>{{ cell.day }}</span>
+        </template>
+      </div>
+    </div>
+
+    <div v-if="selDate" class="cal-picker">
+      <h4>{{ selDateLabel }} <span v-if="log[selDate]">· registrado</span></h4>
+      <div class="pick-row">
+        <button v-for="d in ['A','B','C']" :key="d" class="pick" :class="[d,{on:log[selDate]===d}]" @click="setLog(selDate,d)">Día {{ d }}</button>
+        <button class="pick rest" :class="{on:log[selDate]==='rest'}" @click="setLog(selDate,'rest')">💤 Descanso</button>
+        <button v-if="log[selDate]" class="pick clear" @click="setLog(selDate,null)">✕</button>
+      </div>
+    </div>
+  </main>
+
+  <!-- rest timer -->
+  <button v-if="view==='train'" id="tfab" @click="toggleTimer">⏱<small>DESCANSO</small></button>
+  <div v-if="view==='train' && timerOpen" id="timer">
+    <span class="tlbl">Descanso</span>
+    <b>{{ fmt(tLeft) }}</b>
+    <button class="tbtn" @click="tAdjust(-15)">−</button>
+    <button class="tbtn go" @click="tToggle">{{ tRunning ? '⏸' : '▶' }}</button>
+    <button class="tbtn" @click="tAdjust(15)">＋</button>
+  </div>
+</div>
+
+<script src="vue.global.prod.js"></script>
+<script>
+const RUTINA = {
+  A: [
+    {n:"Prensa de piernas", s:3, r:"10-12", backups:["Sentadilla Smith (guiada)","Sentadilla hack"]},
+    {n:"Press de pecho en máquina", s:3, r:"8-10", backups:["Press banca Smith (guiada)","Press pecho en polea"]},
+    {n:"Jalón al pecho (polea)", s:3, r:"8-10", backups:["Remo en máquina","Pull-over en polea"]},
+    {n:"Press de hombro en máquina", s:2, r:"10-12", backups:["Press hombro en polea","Press militar Smith"]},
+    {n:"Curl femoral tumbado (máquina)", s:3, r:"10-12", backups:["Curl femoral sentado","Peso muerto en máquina (glute drive)"]},
+    {n:"Curl bíceps con mancuerna", s:2, r:"12-15", backups:["Curl bíceps en polea","Curl bíceps en máquina"]},
+    {n:"Cinta", s:1, r:"15 min", cardio:true},
+  ],
+  B: [
+    {n:"Sentadilla hack (máquina)", s:3, r:"10-12", backups:["Prensa de piernas","Sentadilla Smith"]},
+    {n:"Press inclinado en máquina", s:3, r:"8-10", backups:["Press inclinado Smith","Press pecho superior en polea"]},
+    {n:"Remo en máquina (horizontal)", s:3, r:"8-10", backups:["Remo en polea sentado","Jalón al pecho"]},
+    {n:"Elevación lateral en polea/máquina", s:3, r:"12-15", backups:["Elevación lateral en polea (agarre opuesto)","Máquina deltoides lateral"]},
+    {n:"Hip thrust / glute drive (máquina)", s:3, r:"10-12", backups:["Puente de glúteo en máquina","Prensa de piernas (pies altos)"]},
+    {n:"Extensión tríceps en polea", s:2, r:"12-15", backups:["Press francés en polea","Fondos en máquina asistida"]},
+    {n:"Cinta", s:1, r:"15 min", cardio:true},
+  ],
+  C: [
+    {n:"Prensa de piernas (pies altos, glúteo)", s:3, r:"10-12", backups:["Hip thrust / glute drive (máquina)","Sentadilla Smith pies altos"]},
+    {n:"Press de pecho agarre cerrado (máquina)", s:3, r:"8-10", backups:["Press pecho en polea agarre cerrado","Fondos en máquina asistida"]},
+    {n:"Remo en polea baja", s:3, r:"8-10", backups:["Remo en máquina horizontal","Jalón al pecho agarre estrecho"]},
+    {n:"Face pull en polea", s:2, r:"12-15", backups:["Pájaros en polea","Remo a la cara en máquina"]},
+    {n:"Curl femoral (máquina)", s:3, r:"10-12", backups:["Peso muerto en máquina","Hip thrust / glute drive"]},
+    {n:"Plancha / core", s:3, r:"30-45s", backups:["Crunch en máquina","Rueda abdominal (si hay)"]},
+    {n:"Cinta", s:1, r:"15 min", cardio:true},
+  ],
+};
+const DAY_LBL = {A:"Piernas · Empuje · Tirón", B:"Cuádriceps · Superior", C:"Glúteo · Espalda · Core"};
+const DIAS = ["Domingo","Lunes","Martes","Miércoles","Jueves","Viernes","Sábado"];
+const MESES = ["enero","febrero","marzo","abril","mayo","junio","julio","agosto","septiembre","octubre","noviembre","diciembre"];
+const KEY = "gymslop.v2";
+
+function iso(d){ return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0"); }
+
+const { createApp } = Vue;
+
+createApp({
+  data(){
+    const saved = JSON.parse(localStorage.getItem(KEY) || "{}");
+    const now = new Date();
+    return {
+      view: "train",
+      cur: saved.cur || "A",
+      sets: saved.sets || {},       // "A.0" -> [true,false,...]
+      weights: saved.weights || {}, // "A.0" -> "40"
+      swaps: saved.swaps || {},     // "A.0" -> backup index (0/1) or absent
+      log: saved.log || {},         // "2026-07-12" -> "A"|"B"|"C"|"rest"
+      openSwap: null,
+      dayLbl: DAY_LBL,
+      rutina: RUTINA,
+      todayIso: iso(now),
+      calYear: now.getFullYear(),
+      calMonth: now.getMonth(),
+      selDate: null,
+      // timer
+      timerOpen: false,
+      tBase: 90,
+      tLeft: 90,
+      tRunning: false,
+      tHandle: null,
+    };
+  },
+  computed: {
+    todayLabel(){ return DIAS[new Date().getDay()]; },
+    totalSets(){ return RUTINA[this.cur].reduce((a,e)=>a+e.s,0); },
+    doneSets(){
+      return RUTINA[this.cur].reduce((a,e,i)=>a+(this.sets[this.skey(i)]||[]).filter(Boolean).length,0);
+    },
+    pct(){ return this.totalSets ? Math.round(this.doneSets/this.totalSets*100) : 0; },
+    monthName(){ return MESES[this.calMonth]; },
+    calCells(){
+      const first = new Date(this.calYear, this.calMonth, 1);
+      const lead = (first.getDay()+6)%7;               // Monday-first offset
+      const days = new Date(this.calYear, this.calMonth+1, 0).getDate();
+      const cells = [];
+      for(let i=0;i<lead;i++) cells.push(null);
+      for(let d=1;d<=days;d++){
+        cells.push({ day:d, iso:iso(new Date(this.calYear, this.calMonth, d)) });
+      }
+      return cells;
+    },
+    monthCount(){
+      const p = `${this.calYear}-${String(this.calMonth+1).padStart(2,"0")}`;
+      return Object.entries(this.log).filter(([k,v])=>k.startsWith(p)&&v!=="rest").length;
+    },
+    totalCount(){ return Object.values(this.log).filter(v=>v!=="rest").length; },
+    streak(){
+      let n=0; const d=new Date();
+      // if today not logged, start counting from yesterday
+      if(!this.log[iso(d)]) d.setDate(d.getDate()-1);
+      while(true){
+        const k=iso(d), v=this.log[k];
+        if(v && v!=="rest"){ n++; d.setDate(d.getDate()-1); }
+        else if(v==="rest"){ d.setDate(d.getDate()-1); }   // rest day doesn't break streak
+        else break;
+      }
+      return n;
+    },
+    selDateLabel(){
+      if(!this.selDate) return "";
+      const [y,m,dd]=this.selDate.split("-").map(Number);
+      const dt=new Date(y,m-1,dd);
+      return `${DIAS[dt.getDay()]} ${dd} ${MESES[m-1]}`;
+    },
+  },
+  methods: {
+    persist(){
+      localStorage.setItem(KEY, JSON.stringify({
+        cur:this.cur, sets:this.sets, weights:this.weights, swaps:this.swaps, log:this.log
+      }));
+    },
+    skey(i){ return this.cur+"."+i; },
+    exName(i){
+      const s=this.swaps[this.skey(i)];
+      const ex=RUTINA[this.cur][i];
+      return (s!=null && ex.backups && ex.backups[s]!=null) ? ex.backups[s] : ex.n;
+    },
+    setOn(i,j){ return !!(this.sets[this.skey(i)]||[])[j]; },
+    isDone(i){
+      const ex=RUTINA[this.cur][i];
+      return (this.sets[this.skey(i)]||[]).filter(Boolean).length >= ex.s;
+    },
+    toggleSet(i,j){
+      const k=this.skey(i);
+      const arr=(this.sets[k]||[]).slice();
+      arr[j]=!arr[j];
+      this.sets[k]=arr;
+      if(arr[j]) this.startRest();
+    },
+    setWeight(i,v){ this.weights[this.skey(i)]=v; },
+    toggleSwap(i){ this.openSwap = this.openSwap===i ? null : i; },
+    chooseEx(i,bi){
+      const k=this.skey(i);
+      if(bi==null) delete this.swaps[k]; else this.swaps[k]=bi;
+      this.openSwap=null;
+    },
+    resetDay(){
+      RUTINA[this.cur].forEach((_,i)=>{ delete this.sets[this.skey(i)]; });
+    },
+    finishDay(){
+      this.log[this.todayIso]=this.cur;
+      this.view="cal";
+      this.selDate=this.todayIso;
+    },
+    // calendar
+    shiftMonth(n){
+      let m=this.calMonth+n, y=this.calYear;
+      if(m<0){m=11;y--;} if(m>11){m=0;y++;}
+      this.calMonth=m; this.calYear=y;
+    },
+    selectDay(k){ this.selDate = this.selDate===k ? null : k; },
+    setLog(k,v){
+      if(v==null) delete this.log[k]; else this.log[k]=v;
+    },
+    // timer
+    fmt(s){ return Math.floor(s/60)+":"+String(s%60).padStart(2,"0"); },
+    toggleTimer(){ this.timerOpen=!this.timerOpen; this.tStop(); this.tLeft=this.tBase; },
+    startRest(){ this.timerOpen=true; this.tLeft=this.tBase; this.tStop(); this.tRun(); },
+    tRun(){
+      if(this.tHandle) return;
+      if(this.tLeft<=0) this.tLeft=this.tBase;
+      this.tRunning=true;
+      this.tHandle=setInterval(()=>{
+        this.tLeft--;
+        if(this.tLeft<=0){ this.tLeft=0; this.tStop(); this.beep(); }
+      },1000);
+    },
+    tStop(){ clearInterval(this.tHandle); this.tHandle=null; this.tRunning=false; },
+    tToggle(){ this.tRunning ? this.tStop() : this.tRun(); },
+    tAdjust(n){ this.tBase=Math.max(15,this.tBase+n); if(!this.tRunning) this.tLeft=this.tBase; },
+    beep(){
+      try{
+        const a=new (window.AudioContext||window.webkitAudioContext)();
+        const o=a.createOscillator(), g=a.createGain();
+        o.connect(g); g.connect(a.destination); o.type="sine"; o.frequency.value=880;
+        g.gain.setValueAtTime(.001,a.currentTime);
+        g.gain.exponentialRampToValueAtTime(.4,a.currentTime+.02);
+        g.gain.exponentialRampToValueAtTime(.001,a.currentTime+.5);
+        o.start(); o.stop(a.currentTime+.5);
+        if(navigator.vibrate) navigator.vibrate([120,60,120]);
+      }catch(e){}
+    },
+  },
+  watch: {
+    // persist only saved state (not timer ticks)
+    cur: "persist",
+    sets: { deep: true, handler: "persist" },
+    weights: { deep: true, handler: "persist" },
+    swaps: { deep: true, handler: "persist" },
+    log: { deep: true, handler: "persist" },
+  },
+}).mount("#app");
+
+// PWA offline
+if("serviceWorker" in navigator){
+  window.addEventListener("load", ()=> navigator.serviceWorker.register("sw.js").catch(()=>{}));
+}
+</script>
+</body>
+</html>
