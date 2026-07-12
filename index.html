@@ -139,6 +139,20 @@
   .pick-row{display:flex; gap:8px; flex-wrap:wrap}
   .pick{flex:1; min-width:70px; padding:12px 6px; border-radius:11px; border:1px solid var(--line); background:var(--card2); color:var(--txt); font-weight:700; font-size:13.5px; cursor:pointer}
   .pick.clear{flex:0 0 auto; color:var(--mut)}
+  /* week template */
+  .wk-head{display:flex; align-items:center; justify-content:space-between; cursor:pointer}
+  .wk-head b{font-size:15px}
+  .wk-head span{color:var(--mut); font-size:12px}
+  .wk-hint{color:var(--mut); font-size:12.5px; line-height:1.5; margin:10px 0 12px}
+  .wk-row{display:flex; align-items:center; gap:10px; margin-bottom:8px}
+  .wk-day{width:88px; flex:0 0 auto; font-size:14px; font-weight:600}
+  .wk-sel{
+    flex:1; padding:11px 12px; border-radius:10px; border:1px solid var(--line);
+    background:var(--card2); color:var(--txt); font-size:15px; font-weight:600;
+    appearance:none; -webkit-appearance:none;
+    background-image:linear-gradient(45deg,transparent 50%,var(--mut) 50%),linear-gradient(135deg,var(--mut) 50%,transparent 50%);
+    background-position:calc(100% - 18px) 50%,calc(100% - 13px) 50%; background-size:5px 5px,5px 5px; background-repeat:no-repeat;
+  }
   .cal-stats{display:flex; gap:10px; margin-bottom:14px}
   .stat{flex:1; background:var(--card); border:1px solid var(--line); border-radius:12px; padding:12px; text-align:center}
   .stat b{display:block; font-size:24px; color:var(--acc)}
@@ -386,6 +400,27 @@
       <div class="stat"><b>{{ streak }}</b><small>racha (días)</small></div>
       <div class="stat"><b>{{ totalCount }}</b><small>total registrados</small></div>
     </div>
+    <div class="card-box">
+      <div class="wk-head" @click="toggleWeek">
+        <b>⚡ Plantilla semanal</b><span>{{ showWeek ? 'ocultar ▲' : 'configurar ▼' }}</span>
+      </div>
+      <div v-if="showWeek">
+        <p class="wk-hint">Elige qué haces cada día de la semana y replícalo en todo el año. Después edita los días sueltos que quieras cambiar.</p>
+        <div v-for="(lbl,wd) in weekdayNames" :key="wd" class="wk-row">
+          <span class="wk-day">{{ lbl }}</span>
+          <select class="wk-sel" v-model="prof.week[wd]">
+            <option value="">— (nada)</option>
+            <option v-for="d in days" :key="d.id" :value="d.id">{{ d.label }}</option>
+            <option value="rest">💤 Descanso</option>
+          </select>
+        </div>
+        <div class="rowbtns" style="margin-top:12px">
+          <button class="btn" @click="applyWeek('month')">Aplicar a {{ monthName }}</button>
+          <button class="btn primary" @click="applyWeek('year')">Aplicar a {{ calYear }}</button>
+        </div>
+      </div>
+    </div>
+
     <div class="cal-head">
       <button class="cal-nav" @click="shiftMonth(-1)">‹</button>
       <b>{{ monthName }} {{ calYear }}</b>
@@ -736,7 +771,7 @@ const MESES = ["enero","febrero","marzo","abril","mayo","junio","julio","agosto"
 const KEY = "gymslop.v4";
 
 function clone(o){ return JSON.parse(JSON.stringify(o)); }
-function makeProfile(type){ return { type, days: clone(TEMPLATES[type].days), sets:{}, swaps:{}, log:{} }; }
+function makeProfile(type){ return { type, days: clone(TEMPLATES[type].days), sets:{}, swaps:{}, log:{}, week:{} }; }
 function iso(d){ return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0"); }
 
 function fullDaysFrom(routine){
@@ -801,6 +836,8 @@ createApp({
       pickerOpen: false, pickerEx: null, pickerSearch: "", pickerText: "", pickerTextMode: false,
       todayIso: iso(now),
       calYear: now.getFullYear(), calMonth: now.getMonth(), selDate: null,
+      showWeek: false,
+      weekdayNames: ["Lunes","Martes","Miércoles","Jueves","Viernes","Sábado","Domingo"],
       timerOpen: false, tBase: 90, tLeft: 90, tRunning: false, tHandle: null,
     };
   },
@@ -965,6 +1002,29 @@ createApp({
       if(!confirm("¿Restaurar este día a la rutina original? Se pierden tus cambios de ese día.")) return;
       this.curEditDay.ex = clone(td.ex);
       this.clearDaySets(this.editDay);
+    },
+    // calendar — week template autocomplete
+    ensureWeek(){ if(!this.prof.week) this.prof.week={}; for(let i=0;i<7;i++) if(!(i in this.prof.week)) this.prof.week[i]=""; },
+    toggleWeek(){ this.ensureWeek(); this.showWeek=!this.showWeek; },
+    applyWeek(scope){
+      this.ensureWeek();
+      const wk=this.prof.week;
+      if(!Object.keys(wk).some(k=>wk[k])){ alert("Configura al menos un día de la semana."); return; }
+      const y=this.calYear;
+      const start = scope==="month" ? new Date(y,this.calMonth,1) : new Date(y,0,1);
+      const end   = scope==="month" ? new Date(y,this.calMonth+1,0) : new Date(y,11,31);
+      const label = scope==="month" ? (this.monthName+" "+y) : ("todo "+y);
+      if(!confirm("¿Aplicar la plantilla semanal a "+label+"?\nSobrescribe los días ya registrados en esas jornadas.")) return;
+      let count=0;
+      const d=new Date(start);
+      while(d<=end){
+        const idx=(d.getDay()+6)%7;   // Monday-first 0..6
+        const v=wk[idx];
+        if(v){ this.prof.log[iso(d)]=v; count++; }
+        d.setDate(d.getDate()+1);
+      }
+      this.showWeek=false;
+      alert(count+" días aplicados. Toca cualquier día para ajustarlo.");
     },
     // calendar
     shiftMonth(n){ let m=this.calMonth+n, y=this.calYear; if(m<0){m=11;y--;} if(m>11){m=0;y++;} this.calMonth=m; this.calYear=y; },
