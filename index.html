@@ -926,6 +926,19 @@ function loadState(){
 const { createApp } = Vue;
 let installEvent = null;  // kept outside Vue data so the native event isn't wrapped in a proxy
 
+// persistent audio + screen wake lock (so the rest alarm is heard)
+let audioCtx = null;
+function getAudio(){
+  try{
+    if(!audioCtx) audioCtx = new (window.AudioContext||window.webkitAudioContext)();
+    if(audioCtx.state==="suspended") audioCtx.resume();
+  }catch(e){}
+  return audioCtx;
+}
+let wakeLock = null;
+async function acquireWake(){ try{ if("wakeLock" in navigator) wakeLock = await navigator.wakeLock.request("screen"); }catch(e){} }
+function releaseWake(){ try{ if(wakeLock){ wakeLock.release(); wakeLock=null; } }catch(e){} }
+
 createApp({
   data(){
     const st = loadState();
@@ -955,6 +968,8 @@ createApp({
     this.syncDays();
     window.addEventListener("beforeinstallprompt", (e)=>{ e.preventDefault(); installEvent=e; this.canInstall=true; });
     window.addEventListener("appinstalled", ()=>{ installEvent=null; this.canInstall=false; this.isStandalone=true; this.installHelp=false; });
+    // wake lock is auto-released when the tab is hidden — re-acquire if the timer is still running
+    document.addEventListener("visibilitychange", ()=>{ if(document.visibilityState==="visible" && this.tRunning) acquireWake(); });
   },
   computed: {
     prof(){ return this.profiles[this.active] || this.profiles[Object.keys(this.profiles)[0]]; },
@@ -1143,26 +1158,34 @@ createApp({
     // timer
     fmt(s){ return Math.floor(s/60)+":"+String(s%60).padStart(2,"0"); },
     toggleTimer(){ this.timerOpen=!this.timerOpen; this.tStop(); this.tLeft=this.tBase; },
-    startRest(){ this.timerOpen=true; this.tLeft=this.tBase; this.tStop(); this.tRun(); },
+    startRest(){ getAudio(); this.timerOpen=true; this.tLeft=this.tBase; this.tStop(); this.tRun(); },
     tRun(){
       if(this.tHandle) return;
+      getAudio();          // unlock audio on the user gesture
       if(this.tLeft<=0) this.tLeft=this.tBase;
-      this.tRunning=true;
+      this.tRunning=true; acquireWake();
       this.tHandle=setInterval(()=>{ this.tLeft--; if(this.tLeft<=0){ this.tLeft=0; this.tStop(); this.beep(); } },1000);
     },
-    tStop(){ clearInterval(this.tHandle); this.tHandle=null; this.tRunning=false; },
+    tStop(){ clearInterval(this.tHandle); this.tHandle=null; this.tRunning=false; releaseWake(); },
     tToggle(){ this.tRunning ? this.tStop() : this.tRun(); },
     tAdjust(n){ this.tBase=Math.max(15,this.tBase+n); if(!this.tRunning) this.tLeft=this.tBase; },
     beep(){
       try{
-        const a=new (window.AudioContext||window.webkitAudioContext)();
-        const o=a.createOscillator(), g=a.createGain();
-        o.connect(g); g.connect(a.destination); o.type="sine"; o.frequency.value=880;
-        g.gain.setValueAtTime(.001,a.currentTime);
-        g.gain.exponentialRampToValueAtTime(.4,a.currentTime+.02);
-        g.gain.exponentialRampToValueAtTime(.001,a.currentTime+.5);
-        o.start(); o.stop(a.currentTime+.5);
-        if(navigator.vibrate) navigator.vibrate([120,60,120]);
+        const a=getAudio(); if(!a) return;
+        const t0=a.currentTime;
+        const notes=[880,1174,880,1174,880,1318];   // 6 tonos x 0,5s = ~3s
+        notes.forEach((f,i)=>{
+          const s=t0 + i*0.5;
+          const o=a.createOscillator(), g=a.createGain();
+          o.type="square"; o.frequency.value=f;      // onda cuadrada = más fuerte/audible
+          o.connect(g); g.connect(a.destination);
+          g.gain.setValueAtTime(.0001, s);
+          g.gain.exponentialRampToValueAtTime(.5, s+.03);
+          g.gain.setValueAtTime(.5, s+.34);
+          g.gain.exponentialRampToValueAtTime(.0001, s+.46);
+          o.start(s); o.stop(s+.47);
+        });
+        if(navigator.vibrate) navigator.vibrate([300,150,300,150,300,150,500]);
       }catch(e){}
     },
   },
