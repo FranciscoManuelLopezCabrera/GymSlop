@@ -1,4 +1,4 @@
-# GymSlop
+# PacoGym (Beta)
 
 App web (PWA) para consultar y registrar tu rutina de gym desde el móvil. Vue 3 en un solo `index.html`, **sin build ni dependencias externas**, desplegable en cualquier hosting estático gratuito.
 

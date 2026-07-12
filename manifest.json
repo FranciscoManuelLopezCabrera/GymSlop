@@ -1,13 +1,13 @@
 {
-  "name": "GymSlop — Rutina Full Body",
-  "short_name": "GymSlop",
-  "description": "Rutina full body 3 días con backups, seguimiento de series y calendario.",
+  "name": "PacoGym (Beta)",
+  "short_name": "PacoGym",
+  "description": "Rutinas de gym con perfiles, calendario y seguimiento de series. Beta.",
   "start_url": "./index.html",
   "scope": "./",
   "display": "standalone",
   "orientation": "portrait",
-  "background_color": "#0f1115",
-  "theme_color": "#0f1115",
+  "background_color": "#0a0c11",
+  "theme_color": "#0a0c11",
   "icons": [
     { "src": "icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any maskable" }
   ]
