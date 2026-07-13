@@ -301,12 +301,47 @@
   .rest-time{font-size:88px; font-weight:800; font-variant-numeric:tabular-nums; color:var(--acc)}
   .rest-ctrls{display:flex; gap:16px}
   .rest-ctrls .tbtn{width:60px; height:60px; font-size:16px; font-weight:700}
+  /* auth gate */
+  .auth-tabs{display:flex; gap:8px; margin:2px 0 14px}
+  .auth-tabs button{flex:1; padding:10px; border-radius:10px; border:1px solid var(--line); background:var(--card2); color:var(--mut); font-weight:700; font-size:13px; cursor:pointer}
+  .auth-tabs button.on{background:linear-gradient(135deg,var(--acc2),var(--acc)); color:var(--ink); border-color:transparent}
+  .auth-in{width:100%; padding:13px; margin-bottom:10px; border-radius:11px; border:1px solid var(--line); background:var(--card2); color:var(--txt); font-size:15px; box-sizing:border-box}
+  .auth-err{color:var(--red); font-size:13px; margin:2px 0 10px; text-align:center}
+  .auth-go{width:100%}
+  /* cuenta */
+  .acct-row{display:flex; align-items:center; justify-content:space-between; gap:10px; margin-bottom:10px; font-size:14px; color:var(--txt)}
+  .acct-row em{font-style:normal; font-size:12px; color:var(--green); font-weight:700; white-space:nowrap}
+  .acct-row em.bad{color:var(--red)}
 </style>
 </head>
 <body>
 <div id="app" v-cloak>
+  <!-- AUTH GATE -->
+  <div v-if="!authed" class="chooser auth">
+    <div class="ch-box">
+      <div class="ch-logo">🏋️</div>
+      <h2>Paco<span>Gym</span><small class="beta">Beta</small></h2>
+      <p class="ch-sub">{{ authMode==='login' ? 'Entra en tu cuenta' : 'Crea tu cuenta' }}</p>
+      <div class="auth-tabs">
+        <button :class="{on:authMode==='login'}" @click="authMode='login'; authErr=''">Entrar</button>
+        <button :class="{on:authMode==='register'}" @click="authMode='register'; authErr=''">Crear cuenta</button>
+      </div>
+      <input class="auth-in" type="email" inputmode="email" autocomplete="email" v-model="authEmail"
+             placeholder="Email" @keyup.enter="authMode==='login' ? login() : register()">
+      <input class="auth-in" type="password" autocomplete="current-password" v-model="authPass"
+             placeholder="Contraseña" @keyup.enter="authMode==='login' ? login() : register()">
+      <p v-if="authErr" class="auth-err">{{ authErr }}</p>
+      <button class="btn primary auth-go" :disabled="authBusy" @click="authMode==='login' ? login() : register()">
+        {{ authBusy ? 'Conectando…' : (authMode==='login' ? 'Entrar' : 'Crear cuenta') }}
+      </button>
+    </div>
+  </div>
+  <div v-else-if="!loaded" class="chooser auth">
+    <div class="ch-box"><div class="ch-logo">🏋️</div><p class="ch-sub">Cargando tus rutinas…</p></div>
+  </div>
+
   <!-- PROFILE CHOOSER -->
-  <div v-if="needsPick || picking" class="chooser">
+  <div v-if="authed && loaded && (needsPick || picking)" class="chooser">
     <div class="ch-box">
       <div class="ch-logo">🏋️</div>
       <h2>Paco<span>Gym</span><small class="beta">Beta</small></h2>
@@ -487,6 +522,14 @@
 
   <!-- AJUSTES -->
   <main v-if="view==='settings'">
+    <h3 class="sec">Cuenta</h3>
+    <div class="card-box acct">
+      <div class="acct-row">
+        <span>{{ user ? user.email : '' }}</span>
+        <em :class="{bad:syncErr}">{{ syncErr ? '⚠ sin conexión' : 'guardado ✓' }}</em>
+      </div>
+      <button class="btn danger" style="width:100%" @click="doLogout">Cerrar sesión</button>
+    </div>
     <h3 class="sec">Perfil</h3>
     <div class="card-box">
       <div class="prof-list">
@@ -1076,9 +1119,24 @@ let wakeLock = null;
 async function acquireWake(){ try{ if("wakeLock" in navigator) wakeLock = await navigator.wakeLock.request("screen"); }catch(e){} }
 function releaseWake(){ try{ if(wakeLock){ wakeLock.release(); wakeLock=null; } }catch(e){} }
 
+// ---- Supabase (auth + cloud sync via REST, sin SDK) ----
+const SB_URL = "https://TUPROYECTO.supabase.co";   // <-- pega tu Project URL (Task 0)
+const SB_KEY = "PON_AQUI_TU_ANON_KEY";             // <-- pega tu anon public key (pública por diseño; RLS protege)
+const AUTHKEY = "gymslop.auth";                    // localStorage: solo la sesión de auth
+async function sb(path, { method="GET", body=null, token=null, prefer=null }={}){
+  const h = { "apikey": SB_KEY, "Content-Type": "application/json" };
+  if(token) h["Authorization"] = "Bearer " + token;
+  if(prefer) h["Prefer"] = prefer;
+  const res = await fetch(SB_URL + path, { method, headers:h, body: body?JSON.stringify(body):null });
+  const txt = await res.text();
+  const data = txt ? JSON.parse(txt) : null;
+  if(!res.ok) throw new Error((data && (data.error_description||data.msg||data.message||data.error)) || ("HTTP "+res.status));
+  return data;
+}
+const EMPTY_PROFILE = { type:"full", days:[], sets:{}, swaps:{}, log:{}, week:{}, rest:90 };
+
 createApp({
   data(){
-    const st = loadState();
     const now = new Date();
     const ua = navigator.userAgent || "";
     return {
@@ -1089,8 +1147,8 @@ createApp({
       canInstall: false, installHelp: false,
       view: "train",
       cur: "", editDay: "",
-      active: st.active,
-      profiles: st.profiles,
+      active: "",
+      profiles: {},
       picking: false, creating: false,
       newProfile: "", newType: "full",
       typeOpts: TYPE_OPTS,
@@ -1102,9 +1160,13 @@ createApp({
       weekdayNames: ["Lunes","Martes","Miércoles","Jueves","Viernes","Sábado","Domingo"],
       timerOpen: false, tBase: 90, tLeft: 90, tRunning: false, tHandle: null,
       session: false, sesIdx: 0, sesPickOpen: false,
+      authed: false, loaded: false, user: null,
+      authMode: "login", authEmail: "", authPass: "", authErr: "", authBusy: false,
+      syncErr: false, saveT: null,
     };
   },
   mounted(){
+    this.restoreSession();
     this.syncDays();
     this.tBase = this.prof.rest ?? 90; this.tLeft = this.tBase;
     window.addEventListener("beforeinstallprompt", (e)=>{ e.preventDefault(); installEvent=e; this.canInstall=true; });
@@ -1113,7 +1175,7 @@ createApp({
     document.addEventListener("visibilitychange", ()=>{ if(document.visibilityState==="visible" && (this.tRunning||this.session)) acquireWake(); });
   },
   computed: {
-    prof(){ return this.profiles[this.active] || this.profiles[Object.keys(this.profiles)[0]]; },
+    prof(){ return this.profiles[this.active] || this.profiles[Object.keys(this.profiles)[0]] || EMPTY_PROFILE; },
     days(){ return this.prof.days; },
     swaps(){ return this.prof.swaps; },
     log(){ return this.prof.log; },
@@ -1176,7 +1238,6 @@ createApp({
     },
   },
   methods: {
-    persist(){ localStorage.setItem(KEY, JSON.stringify({ active:this.active, profiles:this.profiles })); },
     installApp(){
       if(this.isStandalone) return;
       if(installEvent){
@@ -1250,14 +1311,106 @@ createApp({
     goEx(i){ this.sesIdx=i; this.sesPickOpen=false; },
     skipRest(){ this.tStop(); this.timerOpen=false; },
     finishSession(){ this.finishDay(); this.exitSession(); },
+    // cloud sync (Supabase)
+    async loadCloud(){
+      const token = await this.refreshIfNeeded();
+      const rows = await sb("/rest/v1/user_states?user_id=eq."+this.user.id+"&select=data", { token });
+      if(rows && rows.length && rows[0].data && rows[0].data.profiles){
+        this.active = rows[0].data.active || "";
+        this.profiles = rows[0].data.profiles;
+      } else {
+        this.profiles = { "Paco": makeProfile("full") };
+        this.active = "";
+        this.loaded = true;          // permite el primer saveCloud (insert)
+        await this.saveCloud();
+      }
+      this.syncDays();
+      this.loaded = true;
+    },
+    async saveCloud(){
+      if(!this.user) return;
+      try{
+        const token = await this.refreshIfNeeded();
+        await sb("/rest/v1/user_states", {
+          method:"POST",
+          prefer:"resolution=merge-duplicates,return=minimal",
+          token,
+          body:{ user_id:this.user.id, data:{ active:this.active, profiles:this.profiles }, updated_at:new Date().toISOString() }
+        });
+        this.syncErr = false;
+      }catch(e){ this.syncErr = true; }
+    },
+    queueSave(){
+      if(!this.loaded) return;
+      clearTimeout(this.saveT);
+      this.saveT = setTimeout(()=>this.saveCloud(), 800);
+    },
     resetDay(){ this.curExes.forEach((_,i)=>{ delete this.prof.sets[this.skey(i)]; }); },
     finishDay(){ this.prof.log[this.todayIso]=this.cur; this.view="cal"; this.selDate=this.todayIso; },
     // profiles
+    // auth (Supabase GoTrue)
+    saveSession(resp){
+      const now = Math.floor(Date.now()/1000);
+      const sess = {
+        access_token: resp.access_token,
+        refresh_token: resp.refresh_token,
+        expires_at: now + (resp.expires_in || 3600),
+        user: resp.user ? { id:resp.user.id, email:resp.user.email } : (this.user || {})
+      };
+      localStorage.setItem(AUTHKEY, JSON.stringify(sess));
+      this.user = sess.user;
+      return sess;
+    },
+    readSession(){ try{ return JSON.parse(localStorage.getItem(AUTHKEY)); }catch(e){ return null; } },
+    async refreshIfNeeded(){
+      const s = this.readSession(); if(!s) throw new Error("Sesión no encontrada.");
+      const now = Math.floor(Date.now()/1000);
+      if(s.expires_at - now > 60) return s.access_token;
+      const r = await sb("/auth/v1/token?grant_type=refresh_token", { method:"POST", body:{ refresh_token:s.refresh_token } });
+      return this.saveSession(r).access_token;
+    },
+    async register(){
+      const email=this.authEmail.trim(), pass=this.authPass;
+      if(!email || pass.length<6){ this.authErr="Email válido y contraseña de 6+ caracteres."; return; }
+      this.authErr=""; this.authBusy=true;
+      try{
+        const r = await sb("/auth/v1/signup", { method:"POST", body:{ email, password:pass } });
+        if(!r.access_token) throw new Error("Revisa tu email para confirmar la cuenta.");
+        this.saveSession(r); this.authed=true; this.authPass="";
+        await this.loadCloud();
+      }catch(e){ this.authErr = e.message || "No se pudo crear la cuenta."; }
+      finally{ this.authBusy=false; }
+    },
+    async login(){
+      const email=this.authEmail.trim(), pass=this.authPass;
+      if(!email || !pass){ this.authErr="Introduce email y contraseña."; return; }
+      this.authErr=""; this.authBusy=true;
+      try{
+        const r = await sb("/auth/v1/token?grant_type=password", { method:"POST", body:{ email, password:pass } });
+        this.saveSession(r); this.authed=true; this.authPass="";
+        await this.loadCloud();
+      }catch(e){ this.authErr = e.message || "Email o contraseña incorrectos."; }
+      finally{ this.authBusy=false; }
+    },
+    doLogout(){
+      const s=this.readSession();
+      if(s){ sb("/auth/v1/logout", { method:"POST", token:s.access_token }).catch(()=>{}); }
+      localStorage.removeItem(AUTHKEY);
+      this.authed=false; this.loaded=false; this.user=null;
+      this.profiles={}; this.active=""; this.authEmail=""; this.authPass=""; this.authErr=""; this.syncErr=false;
+    },
+    async restoreSession(){
+      const s = this.readSession(); if(!s) return;
+      this.user = s.user;
+      try{ await this.refreshIfNeeded(); this.authed=true; await this.loadCloud(); }
+      catch(e){ this.doLogout(); }
+    },
     startCreate(){ this.creating=true; this.newProfile=""; this.newType="full"; },
     cancelCreate(){ this.creating=false; this.newProfile=""; },
     pickProfile(name){ this.active=name; this.picking=false; this.creating=false; this.openSwap=null; this.view="train"; this.syncDays(); this.tStop(); this.tBase=this.prof.rest ?? 90; this.tLeft=this.tBase; },
     switchProfile(name){ this.active=name; this.openSwap=null; this.syncDays(); this.tStop(); this.tBase=this.prof.rest ?? 90; this.tLeft=this.tBase; },
     addProfile(){
+      if(Object.keys(this.profiles).length>=4){ alert("Máximo 4 perfiles."); return; }
       const n=this.newProfile.trim();
       if(!n){ return; }
       if(this.profiles[n]){ alert("Ya existe un perfil con ese nombre."); return; }
@@ -1369,8 +1522,8 @@ createApp({
     },
   },
   watch: {
-    active: "persist",
-    profiles: { deep: true, handler: "persist" },
+    active: "queueSave",
+    profiles: { deep: true, handler: "queueSave" },
   },
 }).mount("#app");
 
