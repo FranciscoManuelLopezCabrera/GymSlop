@@ -1,4 +1,4 @@
-# Supabase Auth + Cloud Sync Implementation Plan
+# Supabase Auth + Cloud Sync Implementation Plan claude --resume 2bb421ff-2d59-4bb8-be21-53e578431233
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
