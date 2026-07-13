@@ -271,6 +271,36 @@
     display:flex; flex-direction:column; align-items:center; justify-content:center; line-height:1;
   }
   #tfab small{font-size:9px; font-weight:600; margin-top:2px}
+
+  /* modo entrenamiento */
+  .ses-start{width:100%; margin-bottom:14px; font-size:15px; padding:14px}
+  .session{
+    position:fixed; inset:0; z-index:105; background:var(--bg);
+    background-image:radial-gradient(135% 70% at 50% -12%, rgba(255,106,43,.10), transparent 55%);
+    display:flex; flex-direction:column;
+    padding:calc(14px + env(safe-area-inset-top)) 18px calc(18px + env(safe-area-inset-bottom));
+  }
+  .ses-top{display:flex; align-items:center; justify-content:space-between; gap:10px}
+  .ses-count{font-size:12px; color:var(--mut); font-weight:600}
+  .ses-body{flex:1; display:flex; flex-direction:column; justify-content:center; gap:18px; text-align:center; max-width:520px; width:100%; margin:0 auto}
+  .ses-center{align-items:center}
+  .ses-big{font-size:64px}
+  .ses-title{font-size:22px}
+  .ses-name{background:var(--card2); border:1px solid var(--line); border-radius:var(--rad); color:var(--txt); font-size:22px; font-weight:800; line-height:1.25; padding:16px 18px; cursor:pointer}
+  .ses-name .chev{color:var(--mut); font-size:16px}
+  .ses-name em{display:block; font-style:normal; font-size:13px; color:var(--warn); margin-top:4px}
+  .ses-serie{font-size:34px; font-weight:800; letter-spacing:-.5px}
+  .ses-serie small{color:var(--mut); font-weight:600; font-size:18px}
+  .ses-weight{display:flex; align-items:center; justify-content:center; gap:8px}
+  .ses-weight input{width:110px; padding:12px; border-radius:12px; border:1px solid var(--line); background:var(--card2); color:var(--txt); font-size:22px; text-align:center; font-weight:700}
+  .ses-sets{justify-content:center}
+  .ses-complete{width:100%; font-size:17px; padding:16px}
+  .ses-cta{display:flex; flex-direction:column; gap:10px}
+  .rest-full{position:fixed; inset:0; z-index:108; background:rgba(10,12,17,.94); display:flex; flex-direction:column; align-items:center; justify-content:center; gap:14px}
+  .rest-full .tlbl{font-size:14px; color:var(--mut); letter-spacing:.5px; text-transform:uppercase}
+  .rest-time{font-size:88px; font-weight:800; font-variant-numeric:tabular-nums; color:var(--acc)}
+  .rest-ctrls{display:flex; gap:16px}
+  .rest-ctrls .tbtn{width:60px; height:60px; font-size:16px; font-weight:700}
 </style>
 </head>
 <body>
@@ -340,6 +370,7 @@
   <!-- ENTRENO -->
   <main v-if="view==='train'">
     <template v-if="curExes.length">
+      <button v-if="!sesAllDone" class="btn primary ses-start" @click="enterSession">▶ Empezar entrenamiento</button>
       <div v-for="(ex,i) in curExes" :key="cur+i" class="ex" :class="{done:isDone(i), cardio:ex.cardio}">
         <div class="ex-h">
           <div class="ex-n">
@@ -603,13 +634,101 @@
   </div>
 
   <!-- rest timer -->
-  <button v-if="view==='train' && curExes.length" id="tfab" @click="toggleTimer">⏱<small>DESCANSO</small></button>
-  <div v-if="view==='train' && curExes.length && timerOpen" id="timer">
+  <button v-if="view==='train' && curExes.length && !session" id="tfab" @click="toggleTimer">⏱<small>DESCANSO</small></button>
+  <div v-if="view==='train' && curExes.length && !session && timerOpen" id="timer">
     <span class="tlbl">Descanso</span>
     <b>{{ fmt(tLeft) }}</b>
     <button class="tbtn" @click="tAdjust(-15)">−</button>
     <button class="tbtn go" @click="tToggle">{{ tRunning ? '⏸' : '▶' }}</button>
     <button class="tbtn" @click="tAdjust(15)">＋</button>
+  </div>
+
+  <!-- MODO ENTRENAMIENTO -->
+  <div v-if="session" class="session">
+    <div class="ses-top">
+      <button class="tbtn" @click="exitSession">✕</button>
+      <span class="ses-count">{{ curDay.label }} · {{ sesIdx+1 }}/{{ curExes.length }}</span>
+      <span class="ses-count">{{ doneSets }}/{{ totalSets }}</span>
+    </div>
+
+    <div v-if="sesAllDone" class="ses-body ses-center">
+      <div class="ses-big">🏆</div>
+      <b class="ses-title">¡Entrenamiento completado!</b>
+      <div class="rowbtns">
+        <button class="btn" @click="exitSession">Salir</button>
+        <button class="btn primary" @click="finishSession">✓ Guardar en calendario</button>
+      </div>
+    </div>
+
+    <div v-else class="ses-body">
+      <button class="ses-name" @click="sesPickOpen=true">
+        {{ sesName }} <span class="chev">▾</span>
+        <em v-if="sesSwapped" class="swapped">sustituto</em>
+      </button>
+
+      <template v-if="sesEx && sesEx.cardio">
+        <div class="ses-serie">{{ sesEx.r }}</div>
+      </template>
+      <template v-else>
+        <div class="ses-serie">Serie {{ sesSetNo }} <small>de {{ sesEx ? sesEx.s : 0 }}</small></div>
+        <div class="ses-weight"><input type="tel" inputmode="decimal" placeholder="—" v-model="sesEx.w"><span>kg</span></div>
+      </template>
+
+      <div class="sets ses-sets">
+        <button v-for="j in (sesEx? sesEx.s:0)" :key="j" class="set" :class="{on:setOn(sesIdx,j-1)}" @click="toggleSet(sesIdx,j-1)">
+          {{ sesEx && sesEx.cardio ? '✓' : j }}
+        </button>
+      </div>
+
+      <div class="ses-cta">
+        <button class="btn primary ses-complete" @click="restSeries">
+          {{ isDone(sesIdx) ? 'Siguiente ejercicio →' : '⏱ Descansar' }}
+        </button>
+        <div class="rowbtns">
+          <button class="btn" :disabled="sesIdx===0" @click="prevEx">‹ Anterior</button>
+          <button class="btn" :disabled="sesIdx>=curExes.length-1" @click="nextExManual">Siguiente ›</button>
+        </div>
+      </div>
+    </div>
+
+    <div v-if="timerOpen" class="rest-full">
+      <span class="tlbl">{{ restDone ? '¡Descanso terminado!' : 'Descanso' }}</span>
+      <div class="rest-time">{{ fmt(tLeft) }}</div>
+      <div class="rest-ctrls" v-if="!restDone">
+        <button class="tbtn" @click="tAdjust(-15)">−15</button>
+        <button class="tbtn go" @click="tToggle">{{ tRunning ? '⏸' : '▶' }}</button>
+        <button class="tbtn" @click="tAdjust(15)">+15</button>
+      </div>
+      <button class="btn primary" style="margin-top:18px;max-width:260px" @click="skipRest">
+        {{ restDone ? 'Continuar →' : 'Saltar descanso' }}
+      </button>
+    </div>
+  </div>
+
+  <!-- CAMBIAR EJERCICIO (modo entrenamiento) -->
+  <div v-if="sesPickOpen" class="sheet-bg" @click.self="sesPickOpen=false">
+    <div class="sheet">
+      <div class="sheet-head"><b>Cambiar ejercicio</b><button @click="sesPickOpen=false">✕</button></div>
+      <div class="sheet-list">
+        <div class="grp-h">Ejercicios de hoy</div>
+        <button v-for="(ex,i) in curExes" :key="'d'+i" class="grp-i" :class="{on:i===sesIdx}" @click="goEx(i)">
+          <span>{{ exName(i) }}<small v-if="isDone(i)"> · hecho</small></span>
+          <span v-if="i===sesIdx" class="tick">✓</span>
+        </button>
+        <template v-if="sesEx && sesEx.backups && sesEx.backups.length">
+          <div class="grp-h">Alternativas</div>
+          <button class="grp-i" :class="{on: swaps[skey(sesIdx)]==null}" @click="chooseEx(sesIdx,null); sesPickOpen=false">
+            <span>{{ sesEx.n }} <small>Principal</small></span>
+            <span v-if="swaps[skey(sesIdx)]==null" class="tick">✓</span>
+          </button>
+          <button v-for="(b,bi) in sesEx.backups" :key="'b'+bi" class="grp-i"
+                  :class="{on: swaps[skey(sesIdx)]===bi}" @click="chooseEx(sesIdx,bi); sesPickOpen=false">
+            <span>{{ b }} <small>Backup {{ bi+1 }}</small></span>
+            <span v-if="swaps[skey(sesIdx)]===bi" class="tick">✓</span>
+          </button>
+        </template>
+      </div>
+    </div>
   </div>
 </div>
 
@@ -899,7 +1018,7 @@ const MESES = ["enero","febrero","marzo","abril","mayo","junio","julio","agosto"
 const KEY = "gymslop.v4";
 
 function clone(o){ return JSON.parse(JSON.stringify(o)); }
-function makeProfile(type){ return { type, days: clone(TEMPLATES[type].days), sets:{}, swaps:{}, log:{}, week:{} }; }
+function makeProfile(type){ return { type, days: clone(TEMPLATES[type].days), sets:{}, swaps:{}, log:{}, week:{}, rest:90 }; }
 function iso(d){ return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0"); }
 
 function fullDaysFrom(routine){
@@ -982,14 +1101,16 @@ createApp({
       showWeek: false,
       weekdayNames: ["Lunes","Martes","Miércoles","Jueves","Viernes","Sábado","Domingo"],
       timerOpen: false, tBase: 90, tLeft: 90, tRunning: false, tHandle: null,
+      session: false, sesIdx: 0, sesPickOpen: false,
     };
   },
   mounted(){
     this.syncDays();
+    this.tBase = this.prof.rest ?? 90; this.tLeft = this.tBase;
     window.addEventListener("beforeinstallprompt", (e)=>{ e.preventDefault(); installEvent=e; this.canInstall=true; });
     window.addEventListener("appinstalled", ()=>{ installEvent=null; this.canInstall=false; this.isStandalone=true; this.installHelp=false; });
-    // wake lock is auto-released when the tab is hidden — re-acquire if the timer is still running
-    document.addEventListener("visibilitychange", ()=>{ if(document.visibilityState==="visible" && this.tRunning) acquireWake(); });
+    // wake lock is auto-released when the tab is hidden — re-acquire if the timer or session is still active
+    document.addEventListener("visibilitychange", ()=>{ if(document.visibilityState==="visible" && (this.tRunning||this.session)) acquireWake(); });
   },
   computed: {
     prof(){ return this.profiles[this.active] || this.profiles[Object.keys(this.profiles)[0]]; },
@@ -1015,6 +1136,12 @@ createApp({
     totalSets(){ return this.curExes.reduce((a,e)=>a+(+e.s||0),0); },
     doneSets(){ return this.curExes.reduce((a,e,i)=>a+(this.prof.sets[this.skey(i)]||[]).filter(Boolean).length,0); },
     pct(){ return this.totalSets ? Math.round(this.doneSets/this.totalSets*100) : 0; },
+    sesEx(){ return this.curExes[this.sesIdx] || null; },
+    sesName(){ return this.sesEx ? this.exName(this.sesIdx) : ""; },
+    sesSwapped(){ return this.sesEx ? this.swaps[this.skey(this.sesIdx)]!=null : false; },
+    sesSetNo(){ const j=this.nextSet(this.sesIdx); return j==null ? (this.sesEx?+this.sesEx.s||0:0) : j+1; },
+    sesAllDone(){ return this.curExes.length>0 && this.curExes.every((_,i)=>this.isDone(i)); },
+    restDone(){ return this.timerOpen && this.tLeft<=0; },
     monthName(){ return MESES[this.calMonth]; },
     calCells(){
       const first = new Date(this.calYear, this.calMonth, 1);
@@ -1091,13 +1218,45 @@ createApp({
     },
     toggleSwap(i){ this.openSwap = this.openSwap===i ? null : i; },
     chooseEx(i,bi){ const k=this.skey(i); if(bi==null) delete this.swaps[k]; else this.swaps[k]=bi; this.openSwap=null; },
+    // training session (Modo Entrenamiento)
+    nextSet(i){
+      const ex=this.curExes[i]; if(!ex) return null;
+      const arr=this.prof.sets[this.skey(i)]||[];
+      for(let j=0;j<(+ex.s||0);j++) if(!arr[j]) return j;
+      return null;
+    },
+    firstPendingEx(){ const i=this.curExes.findIndex((_,k)=>!this.isDone(k)); return i<0?0:i; },
+    nextPendingEx(from){
+      const n=this.curExes.length;
+      for(let k=1;k<=n;k++){ const idx=(from+k)%n; if(!this.isDone(idx)) return idx; }
+      return null;
+    },
+    enterSession(){
+      if(!this.curExes.length) return;
+      this.sesIdx=this.firstPendingEx(); this.tBase=this.prof.rest ?? 90;
+      this.session=true; this.sesPickOpen=false; getAudio(); acquireWake();
+    },
+    exitSession(){ this.session=false; this.tStop(); this.timerOpen=false; releaseWake(); },
+    restSeries(){
+      const i=this.sesIdx, j=this.nextSet(i);
+      if(j==null){ this.gotoNextEx(); return; }
+      this.toggleSet(i,j);                       // marks set + auto startRest()
+      if(this.sesAllDone){ this.skipRest(); return; }  // no rest after the very last series
+      if(this.isDone(i)) this.gotoNextEx();
+    },
+    gotoNextEx(){ const nx=this.nextPendingEx(this.sesIdx); if(nx!=null) this.sesIdx=nx; },
+    prevEx(){ if(this.sesIdx>0) this.sesIdx--; },
+    nextExManual(){ if(this.sesIdx<this.curExes.length-1) this.sesIdx++; },
+    goEx(i){ this.sesIdx=i; this.sesPickOpen=false; },
+    skipRest(){ this.tStop(); this.timerOpen=false; },
+    finishSession(){ this.finishDay(); this.exitSession(); },
     resetDay(){ this.curExes.forEach((_,i)=>{ delete this.prof.sets[this.skey(i)]; }); },
     finishDay(){ this.prof.log[this.todayIso]=this.cur; this.view="cal"; this.selDate=this.todayIso; },
     // profiles
     startCreate(){ this.creating=true; this.newProfile=""; this.newType="full"; },
     cancelCreate(){ this.creating=false; this.newProfile=""; },
-    pickProfile(name){ this.active=name; this.picking=false; this.creating=false; this.openSwap=null; this.view="train"; this.syncDays(); },
-    switchProfile(name){ this.active=name; this.openSwap=null; this.syncDays(); },
+    pickProfile(name){ this.active=name; this.picking=false; this.creating=false; this.openSwap=null; this.view="train"; this.syncDays(); this.tStop(); this.tBase=this.prof.rest ?? 90; this.tLeft=this.tBase; },
+    switchProfile(name){ this.active=name; this.openSwap=null; this.syncDays(); this.tStop(); this.tBase=this.prof.rest ?? 90; this.tLeft=this.tBase; },
     addProfile(){
       const n=this.newProfile.trim();
       if(!n){ return; }
@@ -1186,9 +1345,9 @@ createApp({
       this.tRunning=true; acquireWake();
       this.tHandle=setInterval(()=>{ this.tLeft--; if(this.tLeft<=0){ this.tLeft=0; this.tStop(); this.beep(); } },1000);
     },
-    tStop(){ clearInterval(this.tHandle); this.tHandle=null; this.tRunning=false; releaseWake(); },
+    tStop(){ clearInterval(this.tHandle); this.tHandle=null; this.tRunning=false; if(!this.session) releaseWake(); },
     tToggle(){ this.tRunning ? this.tStop() : this.tRun(); },
-    tAdjust(n){ this.tBase=Math.max(15,this.tBase+n); if(!this.tRunning) this.tLeft=this.tBase; },
+    tAdjust(n){ this.tBase=Math.max(15,this.tBase+n); this.prof.rest=this.tBase; if(!this.tRunning) this.tLeft=this.tBase; },
     beep(){
       try{
         const a=getAudio(); if(!a) return;
